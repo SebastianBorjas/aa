@@ -1,4 +1,4 @@
-@extends('layouts.base')
+@extends('layouts.base2')
 
 @push('vite')
   @vite('resources/css/app.css')
