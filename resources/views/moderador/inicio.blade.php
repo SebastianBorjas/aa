@@ -93,8 +93,7 @@
   <!-- Contenido principal -->
   <main class="flex-grow bg-white p-6">
     <div x-show="tab === 'dashboard'" x-transition>
-      <h2 class="text-2xl font-bold text-gray-800 mb-4">Dashboard</h2>
-      <p class="text-gray-600">Bienvenido al panel principal del sistema.</p>
+      @include('moderador.partials.dashboard')
     </div>
 
     <div x-show="tab === 'usuarios'" x-transition>
