@@ -8,7 +8,7 @@
 @section('title', 'Panel Moderador')
 
 @section('main')
-<div x-data="{ tab: 'dashboard', sidebarOpen: false }" class="flex flex-col md:flex-row flex-grow relative">
+<div x-data="{ tab: '{{ request()->query('tab', 'alumnos') }}', sidebarOpen: false }" class="flex flex-col md:flex-row flex-grow relative">
   <!-- Hamburger Button (Mobile Only) -->
   <button x-show="!sidebarOpen" @click="sidebarOpen = true" class="md:hidden fixed top-4 left-4 z-50 p-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,20 +19,20 @@
   <!-- Sidebar (Desktop) -->
   <aside class="hidden md:block w-full md:w-64 bg-[#202c54] text-white p-4 space-y-4">
     <nav class="flex flex-col gap-2">
-      <button @click="tab = 'dashboard'"
-              :class="{ 'bg-[#2e3a68] text-white': tab === 'dashboard' }"
+      <button @click="tab = 'alumnos'"
+              :class="{ 'bg-[#2e3a68] text-white': tab === 'alumnos' }"
               class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
-        Dashboard
+        Alumnos
       </button>
-      <button @click="tab = 'usuarios'"
-              :class="{ 'bg-[#2e3a68] text-white': tab === 'usuarios' }"
+      <button @click="tab = 'instituciones'"
+              :class="{ 'bg-[#2e3a68] text-white': tab === 'instituciones' }"
               class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
-        Usuarios
+        Instituciones
       </button>
-      <button @click="tab = 'reportes'"
-              :class="{ 'bg-[#2e3a68] text-white': tab === 'reportes' }"
+      <button @click="tab = 'empresas'"
+              :class="{ 'bg-[#2e3a68] text-white': tab === 'empresas' }"
               class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
-        Reportes
+        Empresas
       </button>
     </nav>
 
@@ -63,20 +63,20 @@
         </svg>
       </button>
       <nav class="flex flex-col gap-2">
-        <button @click="tab = 'dashboard'; sidebarOpen = false"
-                :class="{ 'bg-[#2e3a68] text-white': tab === 'dashboard' }"
+        <button @click="tab = 'alumnos'; sidebarOpen = false"
+                :class="{ 'bg-[#2e3a68] text-white': tab === 'alumnos' }"
                 class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
-          Dashboard
+          Alumnos
         </button>
-        <button @click="tab = 'usuarios'; sidebarOpen = false"
-                :class="{ 'bg-[#2e3a68] text-white': tab === 'usuarios' }"
+        <button @click="tab = 'instituciones'; sidebarOpen = false"
+                :class="{ 'bg-[#2e3a68] text-white': tab === 'instituciones' }"
                 class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
-          Usuarios
+          Instituciones
         </button>
-        <button @click="tab = 'reportes'; sidebarOpen = false"
-                :class="{ 'bg-[#2e3a68] text-white': tab === 'reportes' }"
+        <button @click="tab = 'empresas'; sidebarOpen = false"
+                :class="{ 'bg-[#2e3a68] text-white': tab === 'empresas' }"
                 class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
-          Reportes
+          Empresas
         </button>
       </nav>
 
@@ -92,16 +92,16 @@
 
   <!-- Contenido principal -->
   <main class="flex-grow bg-white p-6">
-    <div x-show="tab === 'dashboard'" x-transition>
-      @include('moderador.partials.dashboard')
+    <div x-show="tab === 'alumnos'" x-transition>
+      @include('moderador.partials.alumnos')
     </div>
 
-    <div x-show="tab === 'usuarios'" x-transition>
-      @include('moderador.partials.usuarios')
+    <div x-show="tab === 'instituciones'" x-transition>
+      @include('moderador.partials.instituciones')
     </div>
 
-    <div x-show="tab === 'reportes'" x-transition>
-      @include('moderador.partials.reportes')
+    <div x-show="tab === 'empresas'" x-transition>
+      @include('moderador.partials.empresas')
     </div>
   </main>
 </div>

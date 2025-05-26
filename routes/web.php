@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ModController;
 
 // Mostrar login o redirigir al dashboard si ya hay sesión
 Route::get('/', function () {
@@ -39,6 +40,9 @@ Route::middleware('rol:administrador')->group(function () {
 // Moderator Routes
 Route::middleware('rol:moderador')->group(function () {
     Route::get('/moderador/inicio', fn () => view('moderador.inicio'))->name('moderador.inicio');
+    Route::post('/moderador/empresas/register', [ModController::class, 'registerEmpresa'])->name('moderador.registerEmpresa');
+    Route::put('/moderador/empresas/{empresa}', [ModController::class, 'updateEmpresa'])->name('moderador.updateEmpresa');
+    Route::delete('/moderador/empresas/{empresa}', [ModController::class, 'deleteEmpresa'])->name('moderador.deleteEmpresa');
 });
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
