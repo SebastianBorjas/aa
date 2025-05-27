@@ -37,14 +37,23 @@ Route::middleware('rol:administrador')->group(function () {
     Route::put('/admin/actualizar-moderador/{id}', [AdminController::class, 'actualizarModerador'])->name('admin.actualizar_moderador');
 });
 
-// Moderator Routes
-Route::middleware('rol:moderador')->group(function () {
-    Route::get('/moderador/inicio', fn () => view('moderador.inicio'))->name('moderador.inicio');
-    Route::post('/moderador/empresas/register', [ModController::class, 'registerEmpresa'])->name('moderador.registerEmpresa');
+// Rutas existentes (asumidas, basadas en el partial de Empresas)
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/moderador/inicio', [ModController::class, 'inicio'])->name('moderador.inicio');
+    Route::post('/moderador/empresas', [ModController::class, 'registerEmpresa'])->name('moderador.registerEmpresa');
     Route::put('/moderador/empresas/{empresa}', [ModController::class, 'updateEmpresa'])->name('moderador.updateEmpresa');
     Route::delete('/moderador/empresas/{empresa}', [ModController::class, 'deleteEmpresa'])->name('moderador.deleteEmpresa');
+    Route::post('/moderador/instituciones', [ModController::class, 'registerInstitucion'])->name('moderador.registerInstitucion');
+    Route::put('/moderador/instituciones/{institucion}', [ModController::class, 'updateInstitucion'])->name('moderador.updateInstitucion');
+    Route::delete('/moderador/instituciones/{institucion}', [ModController::class, 'deleteInstitucion'])->name('moderador.deleteInstitucion');
+    Route::post('/moderador/maestros', [ModController::class, 'registerMaestro'])->name('moderador.registerMaestro');
+    Route::put('/moderador/maestros/{maestro}', [ModController::class, 'updateMaestro'])->name('moderador.updateMaestro');
+    Route::delete('/moderador/maestros/{maestro}', [ModController::class, 'deleteMaestro'])->name('moderador.deleteMaestro');
+    Route::post('/moderador/especialidades', [ModController::class, 'registerEspecialidad'])->name('moderador.registerEspecialidad');
+    Route::put('/moderador/especialidades/{especialidad}', [ModController::class, 'updateEspecialidad'])->name('moderador.updateEspecialidad');
+    Route::delete('/moderador/especialidades/{especialidad}', [ModController::class, 'deleteEspecialidad'])->name('moderador.deleteEspecialidad');
 });
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Route::get('/nada', function () {
     return view('nada');

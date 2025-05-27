@@ -39,6 +39,19 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // Tabla de especialidades
+        Schema::create('especialidades', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->foreignId('id_plantel')
+                  ->constrained('planteles')
+                  ->onDelete('cascade');
+            $table->foreignId('id_institucion')
+                  ->constrained('instituciones')
+                  ->onDelete('cascade');
+            $table->timestamps();
+        });
+
         // Tabla de maestros
         Schema::create('maestros', function (Blueprint $table) {
             $table->id();
@@ -64,6 +77,7 @@ return new class extends Migration
     {
         // Drop tables in reverse order to avoid foreign key constraint errors
         Schema::dropIfExists('maestros');
+        Schema::dropIfExists('especialidades');
         Schema::dropIfExists('instituciones');
         Schema::dropIfExists('empresas');
     }

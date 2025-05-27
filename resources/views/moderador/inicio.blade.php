@@ -19,21 +19,21 @@
   <!-- Sidebar (Desktop) -->
   <aside class="hidden md:block w-full md:w-64 bg-[#202c54] text-white p-4 space-y-4">
     <nav class="flex flex-col gap-2">
-      <button @click="tab = 'alumnos'"
-              :class="{ 'bg-[#2e3a68] text-white': tab === 'alumnos' }"
-              class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+      <a href="{{ route('moderador.inicio', ['tab' => 'alumnos']) }}"
+         :class="{ 'bg-[#2e3a68] text-white': tab === 'alumnos' }"
+         class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
         Alumnos
-      </button>
-      <button @click="tab = 'instituciones'"
-              :class="{ 'bg-[#2e3a68] text-white': tab === 'instituciones' }"
-              class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+      </a>
+      <a href="{{ route('moderador.inicio', ['tab' => 'instituciones']) }}"
+         :class="{ 'bg-[#2e3a68] text-white': tab === 'instituciones' || tab === 'maestros' || tab === 'especialidades' }"
+         class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
         Instituciones
-      </button>
-      <button @click="tab = 'empresas'"
-              :class="{ 'bg-[#2e3a68] text-white': tab === 'empresas' }"
-              class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+      </a>
+      <a href="{{ route('moderador.inicio', ['tab' => 'empresas']) }}"
+         :class="{ 'bg-[#2e3a68] text-white': tab === 'empresas' }"
+         class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
         Empresas
-      </button>
+      </a>
     </nav>
 
     <form method="POST" action="{{ route('logout') }}" class="pt-4 border-t border-white/20">
@@ -63,21 +63,24 @@
         </svg>
       </button>
       <nav class="flex flex-col gap-2">
-        <button @click="tab = 'alumnos'; sidebarOpen = false"
-                :class="{ 'bg-[#2e3a68] text-white': tab === 'alumnos' }"
-                class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+        <a href="{{ route('moderador.inicio', ['tab' => 'alumnos']) }}"
+           @click="tab = 'alumnos'; sidebarOpen = false"
+           :class="{ 'bg-[#2e3a68] text-white': tab === 'alumnos' }"
+           class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
           Alumnos
-        </button>
-        <button @click="tab = 'instituciones'; sidebarOpen = false"
-                :class="{ 'bg-[#2e3a68] text-white': tab === 'instituciones' }"
-                class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+        </a>
+        <a href="{{ route('moderador.inicio', ['tab' => 'instituciones']) }}"
+           @click="tab = 'instituciones'; sidebarOpen = false"
+           :class="{ 'bg-[#2e3a68] text-white': tab === 'instituciones' || tab === 'maestros' || tab === 'especialidades' }"
+           class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
           Instituciones
-        </button>
-        <button @click="tab = 'empresas'; sidebarOpen = false"
-                :class="{ 'bg-[#2e3a68] text-white': tab === 'empresas' }"
-                class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+        </a>
+        <a href="{{ route('moderador.inicio', ['tab' => 'empresas']) }}"
+           @click="tab = 'empresas'; sidebarOpen = false"
+           :class="{ 'bg-[#2e3a68] text-white': tab === 'empresas' }"
+           class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
           Empresas
-        </button>
+        </a>
       </nav>
 
       <form method="POST" action="{{ route('logout') }}" class="pt-4 border-t border-white/20 mt-auto">
@@ -96,8 +99,8 @@
       @include('moderador.partials.alumnos')
     </div>
 
-    <div x-show="tab === 'instituciones'" x-transition>
-      @include('moderador.partials.instituciones')
+    <div x-show="tab === 'instituciones' || tab === 'maestros' || tab === 'especialidades'" x-transition>
+      @include('moderador.partials.instituciones', ['subtab' => $tab])
     </div>
 
     <div x-show="tab === 'empresas'" x-transition>
@@ -108,10 +111,9 @@
 
 <style>
   [x-cloak] { display: none; }
-  /* Ensure main content stays visible and isn’t pushed out */
   main {
     position: relative;
-    z-index: 20; /* Below sidebar (z-50) and overlay (z-40) */
+    z-index: 20;
   }
 </style>
 @endsection
