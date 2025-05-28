@@ -39,7 +39,7 @@ Route::middleware('rol:administrador')->group(function () {
 
 // Rutas existentes (asumidas, basadas en el partial de Empresas)
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['rol:moderador'])->group(function () {
     Route::get('/moderador/inicio', [ModController::class, 'inicio'])->name('moderador.inicio');
     Route::post('/moderador/empresas', [ModController::class, 'registerEmpresa'])->name('moderador.registerEmpresa');
     Route::put('/moderador/empresas/{empresa}', [ModController::class, 'updateEmpresa'])->name('moderador.updateEmpresa');
