@@ -168,20 +168,6 @@
                                     required
                                 >
                             </div>
-                            <div>
-                                <label for="id_institucion_especialidad_{{ $especialidad->id }}" class="block text-sm font-medium text-gray-700">Institución</label>
-                                <select 
-                                    id="id_institucion_especialidad_{{ $especialidad->id }}" 
-                                    name="id_institucion" 
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
-                                    required
-                                >
-                                    <option value="" disabled {{ old('id_institucion') ? '' : 'selected' }}>Selecciona una institución</option>
-                                    @foreach ($instituciones as $institucion)
-                                        <option value="{{ $institucion->id }}" {{ old('id_institucion', $especialidad->id_institucion) == $institucion->id ? 'selected' : '' }}>{{ $institucion->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
                         </div>
                         <div class="mt-6 flex justify-end space-x-3">
                             <button 

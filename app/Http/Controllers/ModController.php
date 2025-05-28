@@ -341,35 +341,17 @@ class ModController extends Controller
      */
     public function updateEspecialidad(Request $request, Especialidad $especialidad)
     {
-        // Ensure the moderator can only edit especialidades from their plantel
-        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
-        if ($especialidad->id_plantel !== $moderador->id_plantel) {
-            abort(403, 'No autorizado para editar esta especialidad.');
-        }
-
-        // Validate the request
-        $validated = $request->validate([
+        $request->validate([
             'nombre' => 'required|string|max:255',
-            'id_institucion' => 'required|exists:instituciones,id',
+            'section' => 'required|in:especialidad',
         ]);
 
-        // Ensure the selected institucion belongs to the same plantel
-        $institucion = Institucion::findOrFail($validated['id_institucion']);
-        if ($institucion->id_plantel !== $moderador->id_plantel) {
-            abort(403, 'La institución seleccionada no pertenece a tu plantel.');
-        }
-
-        // Update the especialidad
         $especialidad->update([
-            'name' => $validated['nombre'],
-            'id_institucion' => $validated['id_institucion'],
+            'name' => $request->nombre,
         ]);
 
-        return redirect()->route('moderador.inicio', ['tab' => 'especialidades'])
-            ->with('success', 'Especialidad actualizada exitosamente.')
-            ->with('tab', 'especialidades');
+        return redirect()->back()->with(['success' => 'Especialidad actualizada correctamente', 'tab' => 'especialidades']);
     }
-
     /**
      * Delete an existing especialidad.
      */
