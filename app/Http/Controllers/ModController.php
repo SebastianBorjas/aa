@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Alumno;
 use App\Models\Empresa;
 use App\Models\Institucion;
 use App\Models\Maestro;
@@ -20,7 +21,7 @@ class ModController extends Controller
     public function inicio(Request $request)
     {
         return view('moderador.inicio', [
-            'tab' => $request->query('tab', 'empresas'),
+            'tab' => $request->query('tab', 'alumnos'),
         ]);
     }
 
@@ -29,7 +30,6 @@ class ModController extends Controller
      */
     public function registerEmpresa(Request $request)
     {
-        // Validate the request
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
             'correo' => 'required|email|unique:users,email',
@@ -37,17 +37,14 @@ class ModController extends Controller
             'telefono' => 'required|string|max:20',
         ]);
 
-        // Get the current moderator's id_plantel
         $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
 
-        // Create the user
         $user = User::create([
             'email' => $validated['correo'],
             'password' => Hash::make($validated['contrasena']),
             'type' => 'empresa',
         ]);
 
-        // Create the empresa
         Empresa::create([
             'id_user' => $user->id,
             'id_plantel' => $moderador->id_plantel,
@@ -65,13 +62,11 @@ class ModController extends Controller
      */
     public function updateEmpresa(Request $request, Empresa $empresa)
     {
-        // Ensure the moderator can only edit empresas from their plantel
         $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
         if ($empresa->id_plantel !== $moderador->id_plantel) {
             abort(403, 'No autorizado para editar esta empresa.');
         }
 
-        // Validate the request
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
             'telefono' => 'required|string|max:20',
@@ -79,7 +74,6 @@ class ModController extends Controller
             'contrasena' => 'nullable|string|min:6|confirmed',
         ]);
 
-        // Update the user
         $userData = [
             'email' => $validated['correo'],
         ];
@@ -88,7 +82,6 @@ class ModController extends Controller
         }
         $empresa->user->update($userData);
 
-        // Update the empresa
         $empresa->update([
             'name' => $validated['nombre'],
             'telefono' => $validated['telefono'],
@@ -104,16 +97,12 @@ class ModController extends Controller
      */
     public function deleteEmpresa(Empresa $empresa)
     {
-        // Ensure the moderator can only delete empresas from their plantel
         $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
         if ($empresa->id_plantel !== $moderador->id_plantel) {
             abort(403, 'No autorizado para eliminar esta empresa.');
         }
 
-        // Delete the associated user
         $empresa->user->delete();
-
-        // Delete the empresa
         $empresa->delete();
 
         return redirect()->route('moderador.inicio', ['tab' => 'empresas'])
@@ -126,15 +115,12 @@ class ModController extends Controller
      */
     public function registerInstitucion(Request $request)
     {
-        // Validate the request
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
         ]);
 
-        // Get the current moderator's id_plantel
         $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
 
-        // Create the institucion
         Institucion::create([
             'id_user' => null,
             'id_plantel' => $moderador->id_plantel,
@@ -151,18 +137,15 @@ class ModController extends Controller
      */
     public function updateInstitucion(Request $request, Institucion $institucion)
     {
-        // Ensure the moderator can only edit instituciones from their plantel
         $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
         if ($institucion->id_plantel !== $moderador->id_plantel) {
             abort(403, 'No autorizado para editar esta institución.');
         }
 
-        // Validate the request
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
         ]);
 
-        // Update the institucion
         $institucion->update([
             'name' => $validated['nombre'],
         ]);
@@ -177,13 +160,11 @@ class ModController extends Controller
      */
     public function deleteInstitucion(Institucion $institucion)
     {
-        // Ensure the moderator can only delete instituciones from their plantel
         $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
         if ($institucion->id_plantel !== $moderador->id_plantel) {
             abort(403, 'No autorizado para eliminar esta institución.');
         }
 
-        // Delete the institucion
         $institucion->delete();
 
         return redirect()->route('moderador.inicio', ['tab' => 'instituciones'])
@@ -196,7 +177,6 @@ class ModController extends Controller
      */
     public function registerMaestro(Request $request)
     {
-        // Validate the request
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
             'correo' => 'required|email|unique:users,email',
@@ -205,23 +185,18 @@ class ModController extends Controller
             'id_institucion' => 'required|exists:instituciones,id',
         ]);
 
-        // Get the current moderator's id_plantel
         $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
-
-        // Ensure the selected institucion belongs to the same plantel
         $institucion = Institucion::findOrFail($validated['id_institucion']);
         if ($institucion->id_plantel !== $moderador->id_plantel) {
             abort(403, 'La institución seleccionada no pertenece a tu plantel.');
         }
 
-        // Create the user
         $user = User::create([
             'email' => $validated['correo'],
             'password' => Hash::make($validated['contrasena']),
             'type' => 'maestro',
         ]);
 
-        // Create the maestro
         Maestro::create([
             'id_user' => $user->id,
             'id_institucion' => $validated['id_institucion'],
@@ -240,13 +215,11 @@ class ModController extends Controller
      */
     public function updateMaestro(Request $request, Maestro $maestro)
     {
-        // Ensure the moderator can only edit maestros from their plantel
         $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
         if ($maestro->id_plantel !== $moderador->id_plantel) {
             abort(403, 'No autorizado para editar este maestro.');
         }
 
-        // Validate the request
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
             'telefono' => 'required|string|max:20',
@@ -255,13 +228,11 @@ class ModController extends Controller
             'id_institucion' => 'required|exists:instituciones,id',
         ]);
 
-        // Ensure the selected institucion belongs to the same plantel
         $institucion = Institucion::findOrFail($validated['id_institucion']);
         if ($institucion->id_plantel !== $moderador->id_plantel) {
             abort(403, 'La institución seleccionada no pertenece a tu plantel.');
         }
 
-        // Update the user
         $userData = [
             'email' => $validated['correo'],
         ];
@@ -270,7 +241,6 @@ class ModController extends Controller
         }
         $maestro->user->update($userData);
 
-        // Update the maestro
         $maestro->update([
             'name' => $validated['nombre'],
             'telefono' => $validated['telefono'],
@@ -287,16 +257,12 @@ class ModController extends Controller
      */
     public function deleteMaestro(Maestro $maestro)
     {
-        // Ensure the moderator can only delete maestros from their plantel
         $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
         if ($maestro->id_plantel !== $moderador->id_plantel) {
             abort(403, 'No autorizado para eliminar este maestro.');
         }
 
-        // Delete the associated user
         $maestro->user->delete();
-
-        // Delete the maestro
         $maestro->delete();
 
         return redirect()->route('moderador.inicio', ['tab' => 'maestros'])
@@ -309,22 +275,17 @@ class ModController extends Controller
      */
     public function registerEspecialidad(Request $request)
     {
-        // Validate the request
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
             'id_institucion' => 'required|exists:instituciones,id',
         ]);
 
-        // Get the current moderator's id_plantel
         $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
-
-        // Ensure the selected institucion belongs to the same plantel
         $institucion = Institucion::findOrFail($validated['id_institucion']);
         if ($institucion->id_plantel !== $moderador->id_plantel) {
             abort(403, 'La institución seleccionada no pertenece a tu plantel.');
         }
 
-        // Create the especialidad
         Especialidad::create([
             'name' => $validated['nombre'],
             'id_plantel' => $moderador->id_plantel,
@@ -341,33 +302,241 @@ class ModController extends Controller
      */
     public function updateEspecialidad(Request $request, Especialidad $especialidad)
     {
-        $request->validate([
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+        if ($especialidad->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'No autorizado para editar esta especialidad.');
+        }
+
+        $validated = $request->validate([
             'nombre' => 'required|string|max:255',
             'section' => 'required|in:especialidad',
         ]);
 
         $especialidad->update([
-            'name' => $request->nombre,
+            'name' => $validated['nombre'],
         ]);
 
-        return redirect()->back()->with(['success' => 'Especialidad actualizada correctamente', 'tab' => 'especialidades']);
+        return redirect()->route('moderador.inicio', ['tab' => 'especialidades'])
+            ->with('success', 'Especialidad actualizada exitosamente.')
+            ->with('tab', 'especialidades');
     }
+
     /**
      * Delete an existing especialidad.
      */
     public function deleteEspecialidad(Especialidad $especialidad)
     {
-        // Ensure the moderator can only delete especialidades from their plantel
         $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
         if ($especialidad->id_plantel !== $moderador->id_plantel) {
             abort(403, 'No autorizado para eliminar esta especialidad.');
         }
 
-        // Delete the especialidad
         $especialidad->delete();
 
         return redirect()->route('moderador.inicio', ['tab' => 'especialidades'])
             ->with('success', 'Especialidad eliminada exitosamente.')
             ->with('tab', 'especialidades');
+    }
+
+    /**
+     * Register a new alumno and associated user.
+     */
+    public function registerAlumno(Request $request)
+    {
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'correo' => 'required|email|unique:users,email',
+            'contrasena' => 'required|string|min:6|confirmed',
+            'telefono' => 'required|string|max:20',
+            'telefono_emergencia' => 'required|string|max:20',
+            'lunes' => 'boolean',
+            'martes' => 'boolean',
+            'miercoles' => 'boolean',
+            'jueves' => 'boolean',
+            'viernes' => 'boolean',
+            'sabado' => 'boolean',
+            'domingo' => 'boolean',
+            'fecha_inicio' => 'required|date',
+            'fecha_termino' => 'required|date|after_or_equal:fecha_inicio',
+            'id_empresa' => 'required|exists:empresas,id',
+            'id_institucion' => 'required|exists:instituciones,id',
+            'id_maestro' => 'required|exists:maestros,id',
+            'id_especialidad' => 'required|exists:especialidades,id',
+        ]);
+
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+
+        // Validate that selected empresa, institucion, maestro, and especialidad belong to moderator's plantel
+        $empresa = Empresa::findOrFail($validated['id_empresa']);
+        $institucion = Institucion::findOrFail($validated['id_institucion']);
+        $maestro = Maestro::findOrFail($validated['id_maestro']);
+        $especialidad = Especialidad::findOrFail($validated['id_especialidad']);
+
+        if ($empresa->id_plantel !== $moderador->id_plantel ||
+            $institucion->id_plantel !== $moderador->id_plantel ||
+            $maestro->id_plantel !== $moderador->id_plantel ||
+            $especialidad->id_plantel !== $moderador->id_plantel ||
+            $maestro->id_institucion !== $institucion->id ||
+            $especialidad->id_institucion !== $institucion->id) {
+            abort(403, 'Selecciones no válidas para este plantel o institución.');
+        }
+
+        $user = User::create([
+            'email' => $validated['correo'],
+            'password' => Hash::make($validated['contrasena']),
+            'type' => 'alumno',
+        ]);
+
+        Alumno::create([
+            'id_user' => $user->id,
+            'id_plantel' => $moderador->id_plantel,
+            'id_especialidad' => $validated['id_especialidad'],
+            'name' => $validated['nombre'],
+            'telefono' => $validated['telefono'],
+            'telefono_emergencia' => $validated['telefono_emergencia'],
+            'lunes' => $validated['lunes'],
+            'martes' => $validated['martes'],
+            'miercoles' => $validated['miercoles'],
+            'jueves' => $validated['jueves'],
+            'viernes' => $validated['viernes'],
+            'sabado' => $validated['sabado'],
+            'domingo' => $validated['domingo'],
+            'fecha_inicio' => $validated['fecha_inicio'],
+            'fecha_termino' => $validated['fecha_termino'],
+            'id_empresa' => $validated['id_empresa'],
+            'id_maestro' => $validated['id_maestro'],
+            'id_institucion' => $validated['id_institucion'],
+        ]);
+
+        return redirect()->route('moderador.inicio', ['tab' => 'alumnos'])
+            ->with('success', 'Alumno registrado exitosamente.')
+            ->with('tab', 'alumnos');
+    }
+
+    /**
+     * Update an existing alumno.
+     */
+    public function updateAlumno(Request $request, Alumno $alumno)
+    {
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+        if ($alumno->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'No autorizado para editar este alumno.');
+        }
+
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'telefono' => 'required|string|max:20',
+            'telefono_emergencia' => 'required|string|max:20',
+            'correo' => 'required|email|unique:users,email,' . $alumno->user->id,
+            'contrasena' => 'nullable|string|min:6|confirmed',
+            'lunes' => 'boolean',
+            'martes' => 'boolean',
+            'miercoles' => 'boolean',
+            'jueves' => 'boolean',
+            'viernes' => 'boolean',
+            'sabado' => 'boolean',
+            'domingo' => 'boolean',
+            'fecha_inicio' => 'required|date',
+            'fecha_termino' => 'required|date|after_or_equal:fecha_inicio',
+            'id_empresa' => 'required|exists:empresas,id',
+            'id_institucion' => 'required|exists:instituciones,id',
+            'id_maestro' => 'required|exists:maestros,id',
+            'id_especialidad' => 'required|exists:especialidades,id',
+        ]);
+
+        $empresa = Empresa::findOrFail($validated['id_empresa']);
+        $institucion = Institucion::findOrFail($validated['id_institucion']);
+        $maestro = Maestro::findOrFail($validated['id_maestro']);
+        $especialidad = Especialidad::findOrFail($validated['id_especialidad']);
+
+        if ($empresa->id_plantel !== $moderador->id_plantel ||
+            $institucion->id_plantel !== $moderador->id_plantel ||
+            $maestro->id_plantel !== $moderador->id_plantel ||
+            $especialidad->id_plantel !== $moderador->id_plantel ||
+            $maestro->id_institucion !== $institucion->id ||
+            $especialidad->id_institucion !== $institucion->id) {
+            abort(403, 'Selecciones no válidas para este plantel o institución.');
+        }
+
+        $userData = [
+            'email' => $validated['correo'],
+        ];
+        if (!empty($validated['contrasena'])) {
+            $userData['password'] = Hash::make($validated['contrasena']);
+        }
+        $alumno->user->update($userData);
+
+        $alumno->update([
+            'name' => $validated['nombre'],
+            'telefono' => $validated['telefono'],
+            'telefono_emergencia' => $validated['telefono_emergencia'],
+            'lunes' => $validated['lunes'],
+            'martes' => $validated['martes'],
+            'miercoles' => $validated['miercoles'],
+            'jueves' => $validated['jueves'],
+            'viernes' => $validated['viernes'],
+            'sabado' => $validated['sabado'],
+            'domingo' => $validated['domingo'],
+            'fecha_inicio' => $validated['fecha_inicio'],
+            'fecha_termino' => $validated['fecha_termino'],
+            'id_empresa' => $validated['id_empresa'],
+            'id_maestro' => $validated['id_maestro'],
+            'id_institucion' => $validated['id_institucion'],
+            'id_especialidad' => $validated['id_especialidad'],
+        ]);
+
+        return redirect()->route('moderador.inicio', ['tab' => 'alumnos'])
+            ->with('success', 'Alumno actualizado exitosamente.')
+            ->with('tab', 'alumnos');
+    }
+
+    /**
+     * Delete an existing alumno and its associated user.
+     */
+    public function deleteAlumno(Alumno $alumno)
+    {
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+        if ($alumno->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'No autorizado para eliminar este alumno.');
+        }
+
+        $alumno->user->delete();
+        $alumno->delete();
+
+        return redirect()->route('moderador.inicio', ['tab' => 'alumnos'])
+            ->with('success', 'Alumno eliminado exitosamente.')
+            ->with('tab', 'alumnos');
+    }
+
+    /**
+     * Fetch maestros by institucion ID.
+     */
+    public function getMaestrosPorInstitucion($institucionId)
+    {
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+        $institucion = Institucion::findOrFail($institucionId);
+
+        if ($institucion->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'No autorizado para acceder a esta institución.');
+        }
+
+        $maestros = Maestro::where('id_institucion', $institucionId)->get(['id', 'name']);
+        return response()->json($maestros);
+    }
+
+    /**
+     * Fetch especialidades by institucion ID.
+     */
+    public function getEspecialidadesPorInstitucion($institucionId)
+    {
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+        $institucion = Institucion::findOrFail($institucionId);
+
+        if ($institucion->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'No autorizado para acceder a esta institución.');
+        }
+
+        $especialidades = Especialidad::where('id_institucion', $institucionId)->get(['id', 'name']);
+        return response()->json($especialidades);
     }
 }

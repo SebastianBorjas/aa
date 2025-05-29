@@ -1,0 +1,921 @@
+Modelos:
+	Alumno: "<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Alumno extends Model
+{
+    public $timestamps = true;
+
+    protected $table = 'alumnos';
+
+    protected $fillable = [
+        'id_user',
+        'id_plantel',
+        'id_especialidad',
+        'name',
+        'telefono',
+        'telefono_emergencia',
+        'lunes',
+        'martes',
+        'miercoles',
+        'jueves',
+        'viernes',
+        'sabado',
+        'domingo',
+        'fecha_inicio',
+        'fecha_termino',
+        'id_empresa',
+        'id_maestro',
+        'id_institucion',
+    ];
+
+    protected $casts = [
+        'lunes' => 'boolean',
+        'martes' => 'boolean',
+        'miercoles' => 'boolean',
+        'jueves' => 'boolean',
+        'viernes' => 'boolean',
+        'sabado' => 'boolean',
+        'domingo' => 'boolean',
+        'fecha_inicio' => 'date',
+        'fecha_termino' => 'date',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'id_user');
+    }
+
+    public function plantel(): BelongsTo
+    {
+        return $this->belongsTo(Plantel::class, 'id_plantel');
+    }
+
+    public function especialidad(): BelongsTo
+    {
+        return $this->belongsTo(Especialidad::class, 'id_especialidad');
+    }
+
+    public function empresa(): BelongsTo
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa');
+    }
+
+    public function maestro(): BelongsTo
+    {
+        return $this->belongsTo(Maestro::class, 'id_maestro');
+    }
+
+    public function institucion(): BelongsTo
+    {
+        return $this->belongsTo(Institucion::class, 'id_institucion');
+    }
+}"
+
+	Empresa: "<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Empresa extends Model
+{
+    // Enable timestamps since the schema includes created_at/updated_at
+    public $timestamps = true;
+
+    // Explicitly define the table name (optional, as Laravel would infer 'empresas')
+    protected $table = 'empresas';
+
+    // Columns that are mass assignable
+    protected $fillable = [
+        'id_user',
+        'id_plantel',
+        'name',
+        'telefono',
+    ];
+
+    /**
+     * An empresa belongs to a user
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'id_user');
+    }
+
+    /**
+     * An empresa belongs to a plantel
+     */
+    public function plantel(): BelongsTo
+    {
+        return $this->belongsTo(Plantel::class, 'id_plantel');
+    }
+}"
+
+	Especialidad:"<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Especialidad extends Model
+{
+    // Enable timestamps since the schema includes created_at/updated_at
+    public $timestamps = true;
+
+    // Explicitly define the table name (optional, as Laravel would infer 'especialidades')
+    protected $table = 'especialidades';
+
+    // Columns that are mass assignable
+    protected $fillable = [
+        'name',
+        'id_plantel',
+        'id_institucion',
+    ];
+
+    /**
+     * An especialidad belongs to a plantel
+     */
+    public function plantel(): BelongsTo
+    {
+        return $this->belongsTo(Plantel::class, 'id_plantel');
+    }
+
+    /**
+     * An especialidad belongs to an institucion
+     */
+    public function institucion(): BelongsTo
+    {
+        return $this->belongsTo(Institucion::class, 'id_institucion');
+    }
+}"
+
+	Institucion:"<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Institucion extends Model
+{
+    // Enable timestamps since the schema includes created_at/updated_at
+    public $timestamps = true;
+
+    // Explicitly define the table name (optional, as Laravel would infer 'instituciones')
+    protected $table = 'instituciones';
+
+    // Columns that are mass assignable
+    protected $fillable = [
+        'id_user',
+        'id_plantel',
+        'name',
+    ];
+
+    /**
+     * An institucion belongs to a user
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'id_user');
+    }
+
+    /**
+     * An institucion belongs to a plantel
+     */
+    public function plantel(): BelongsTo
+    {
+        return $this->belongsTo(Plantel::class, 'id_plantel');
+    }
+
+    /**
+     * An institucion can have many maestros
+     */
+    public function maestros(): HasMany
+    {
+        return $this->hasMany(Maestro::class, 'id_institucion');
+    }
+}"
+
+	Maestro: "<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Maestro extends Model
+{
+    // Enable timestamps since the schema includes created_at/updated_at
+    public $timestamps = true;
+
+    // Explicitly define the table name (optional, as Laravel would infer 'maestros')
+    protected $table = 'maestros';
+
+    // Columns that are mass assignable
+    protected $fillable = [
+        'id_user',
+        'id_institucion',
+        'id_plantel',
+        'name',
+        'telefono',
+    ];
+
+    /**
+     * A maestro belongs to a user
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'id_user');
+    }
+
+    /**
+     * A maestro belongs to an institucion
+     */
+    public function institucion(): BelongsTo
+    {
+        return $this->belongsTo(Institucion::class, 'id_institucion');
+    }
+
+    /**
+     * A maestro belongs to a plantel
+     */
+    public function plantel(): BelongsTo
+    {
+        return $this->belongsTo(Plantel::class, 'id_plantel');
+    }
+}"
+
+	Moderador: "<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Moderador extends Model
+{
+    public $timestamps = false;
+    protected $table = 'moderadores';
+    protected $fillable = ['id_user', 'id_plantel', 'name']; // Adiciona 'name' ao fillable
+
+    /**
+     * Un moderador pertenece a un usuario
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\User::class, 'id_user');
+    }
+
+    /**
+     * Un moderador pertenece a un plantel
+     */
+    public function plantel(): BelongsTo
+    {
+        return $this->belongsTo(Plantel::class, 'id_plantel');
+    }
+}"
+
+	Plantel: "<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Plantel extends Model
+{
+    // Indica que no hay columnas created_at/updated_at
+    public $timestamps = false;
+
+    // Nombre de la tabla (por convención Laravel hubiera sido "plantels")
+    protected $table = 'planteles';
+
+    // Columns que se pueden asignar en masa
+    protected $fillable = ['nombre'];
+
+    /**
+     * Un plantel puede tener muchos moderadores
+     */
+    public function moderadores(): HasMany
+    {
+        return $this->hasMany(Moderador::class, 'id_plantel');
+    }
+}
+"
+
+	User:"<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+class User extends Authenticatable
+{
+    use HasFactory, Notifiable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'email',
+        'password',
+        'type',          // agregamos el enum de tipo de usuario
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password'          => 'hashed',
+        'type'              => 'string',  // casteamos el enum como string
+    ];
+}
+"
+
+ModController: "<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Empresa;
+use App\Models\Institucion;
+use App\Models\Maestro;
+use App\Models\Especialidad;
+use App\Models\User;
+use App\Models\Moderador;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
+class ModController extends Controller
+{
+    /**
+     * Display the moderator dashboard with the specified tab.
+     */
+    public function inicio(Request $request)
+    {
+        return view('moderador.inicio', [
+            'tab' => $request->query('tab', 'empresas'),
+        ]);
+    }
+
+    /**
+     * Register a new empresa and associated user.
+     */
+    public function registerEmpresa(Request $request)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'correo' => 'required|email|unique:users,email',
+            'contrasena' => 'required|string|min:6|confirmed',
+            'telefono' => 'required|string|max:20',
+        ]);
+
+        // Get the current moderator's id_plantel
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+
+        // Create the user
+        $user = User::create([
+            'email' => $validated['correo'],
+            'password' => Hash::make($validated['contrasena']),
+            'type' => 'empresa',
+        ]);
+
+        // Create the empresa
+        Empresa::create([
+            'id_user' => $user->id,
+            'id_plantel' => $moderador->id_plantel,
+            'name' => $validated['nombre'],
+            'telefono' => $validated['telefono'],
+        ]);
+
+        return redirect()->route('moderador.inicio', ['tab' => 'empresas'])
+            ->with('success', 'Empresa registrada exitosamente.')
+            ->with('tab', 'empresas');
+    }
+
+    /**
+     * Update an existing empresa.
+     */
+    public function updateEmpresa(Request $request, Empresa $empresa)
+    {
+        // Ensure the moderator can only edit empresas from their plantel
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+        if ($empresa->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'No autorizado para editar esta empresa.');
+        }
+
+        // Validate the request
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'telefono' => 'required|string|max:20',
+            'correo' => 'required|email|unique:users,email,' . $empresa->user->id,
+            'contrasena' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        // Update the user
+        $userData = [
+            'email' => $validated['correo'],
+        ];
+        if (!empty($validated['contrasena'])) {
+            $userData['password'] = Hash::make($validated['contrasena']);
+        }
+        $empresa->user->update($userData);
+
+        // Update the empresa
+        $empresa->update([
+            'name' => $validated['nombre'],
+            'telefono' => $validated['telefono'],
+        ]);
+
+        return redirect()->route('moderador.inicio', ['tab' => 'empresas'])
+            ->with('success', 'Empresa actualizada exitosamente.')
+            ->with('tab', 'empresas');
+    }
+
+    /**
+     * Delete an existing empresa and its associated user.
+     */
+    public function deleteEmpresa(Empresa $empresa)
+    {
+        // Ensure the moderator can only delete empresas from their plantel
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+        if ($empresa->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'No autorizado para eliminar esta empresa.');
+        }
+
+        // Delete the associated user
+        $empresa->user->delete();
+
+        // Delete the empresa
+        $empresa->delete();
+
+        return redirect()->route('moderador.inicio', ['tab' => 'empresas'])
+            ->with('success', 'Empresa eliminada exitosamente.')
+            ->with('tab', 'empresas');
+    }
+
+    /**
+     * Register a new institucion.
+     */
+    public function registerInstitucion(Request $request)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+        ]);
+
+        // Get the current moderator's id_plantel
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+
+        // Create the institucion
+        Institucion::create([
+            'id_user' => null,
+            'id_plantel' => $moderador->id_plantel,
+            'name' => $validated['nombre'],
+        ]);
+
+        return redirect()->route('moderador.inicio', ['tab' => 'instituciones'])
+            ->with('success', 'Institución registrada exitosamente.')
+            ->with('tab', 'instituciones');
+    }
+
+    /**
+     * Update an existing institucion.
+     */
+    public function updateInstitucion(Request $request, Institucion $institucion)
+    {
+        // Ensure the moderator can only edit instituciones from their plantel
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+        if ($institucion->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'No autorizado para editar esta institución.');
+        }
+
+        // Validate the request
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+        ]);
+
+        // Update the institucion
+        $institucion->update([
+            'name' => $validated['nombre'],
+        ]);
+
+        return redirect()->route('moderador.inicio', ['tab' => 'instituciones'])
+            ->with('success', 'Institución actualizada exitosamente.')
+            ->with('tab', 'instituciones');
+    }
+
+    /**
+     * Delete an existing institucion.
+     */
+    public function deleteInstitucion(Institucion $institucion)
+    {
+        // Ensure the moderator can only delete instituciones from their plantel
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+        if ($institucion->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'No autorizado para eliminar esta institución.');
+        }
+
+        // Delete the institucion
+        $institucion->delete();
+
+        return redirect()->route('moderador.inicio', ['tab' => 'instituciones'])
+            ->with('success', 'Institución eliminada exitosamente.')
+            ->with('tab', 'instituciones');
+    }
+
+    /**
+     * Register a new maestro and associated user.
+     */
+    public function registerMaestro(Request $request)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'correo' => 'required|email|unique:users,email',
+            'contrasena' => 'required|string|min:6|confirmed',
+            'telefono' => 'required|string|max:20',
+            'id_institucion' => 'required|exists:instituciones,id',
+        ]);
+
+        // Get the current moderator's id_plantel
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+
+        // Ensure the selected institucion belongs to the same plantel
+        $institucion = Institucion::findOrFail($validated['id_institucion']);
+        if ($institucion->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'La institución seleccionada no pertenece a tu plantel.');
+        }
+
+        // Create the user
+        $user = User::create([
+            'email' => $validated['correo'],
+            'password' => Hash::make($validated['contrasena']),
+            'type' => 'maestro',
+        ]);
+
+        // Create the maestro
+        Maestro::create([
+            'id_user' => $user->id,
+            'id_institucion' => $validated['id_institucion'],
+            'id_plantel' => $moderador->id_plantel,
+            'name' => $validated['nombre'],
+            'telefono' => $validated['telefono'],
+        ]);
+
+        return redirect()->route('moderador.inicio', ['tab' => 'maestros'])
+            ->with('success', 'Maestro registrado exitosamente.')
+            ->with('tab', 'maestros');
+    }
+
+    /**
+     * Update an existing maestro.
+     */
+    public function updateMaestro(Request $request, Maestro $maestro)
+    {
+        // Ensure the moderator can only edit maestros from their plantel
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+        if ($maestro->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'No autorizado para editar este maestro.');
+        }
+
+        // Validate the request
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'telefono' => 'required|string|max:20',
+            'correo' => 'required|email|unique:users,email,' . $maestro->user->id,
+            'contrasena' => 'nullable|string|min:6|confirmed',
+            'id_institucion' => 'required|exists:instituciones,id',
+        ]);
+
+        // Ensure the selected institucion belongs to the same plantel
+        $institucion = Institucion::findOrFail($validated['id_institucion']);
+        if ($institucion->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'La institución seleccionada no pertenece a tu plantel.');
+        }
+
+        // Update the user
+        $userData = [
+            'email' => $validated['correo'],
+        ];
+        if (!empty($validated['contrasena'])) {
+            $userData['password'] = Hash::make($validated['contrasena']);
+        }
+        $maestro->user->update($userData);
+
+        // Update the maestro
+        $maestro->update([
+            'name' => $validated['nombre'],
+            'telefono' => $validated['telefono'],
+            'id_institucion' => $validated['id_institucion'],
+        ]);
+
+        return redirect()->route('moderador.inicio', ['tab' => 'maestros'])
+            ->with('success', 'Maestro actualizado exitosamente.')
+            ->with('tab', 'maestros');
+    }
+
+    /**
+     * Delete an existing maestro and its associated user.
+     */
+    public function deleteMaestro(Maestro $maestro)
+    {
+        // Ensure the moderator can only delete maestros from their plantel
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+        if ($maestro->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'No autorizado para eliminar este maestro.');
+        }
+
+        // Delete the associated user
+        $maestro->user->delete();
+
+        // Delete the maestro
+        $maestro->delete();
+
+        return redirect()->route('moderador.inicio', ['tab' => 'maestros'])
+            ->with('success', 'Maestro eliminado exitosamente.')
+            ->with('tab', 'maestros');
+    }
+
+    /**
+     * Register a new especialidad.
+     */
+    public function registerEspecialidad(Request $request)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'id_institucion' => 'required|exists:instituciones,id',
+        ]);
+
+        // Get the current moderator's id_plantel
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+
+        // Ensure the selected institucion belongs to the same plantel
+        $institucion = Institucion::findOrFail($validated['id_institucion']);
+        if ($institucion->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'La institución seleccionada no pertenece a tu plantel.');
+        }
+
+        // Create the especialidad
+        Especialidad::create([
+            'name' => $validated['nombre'],
+            'id_plantel' => $moderador->id_plantel,
+            'id_institucion' => $validated['id_institucion'],
+        ]);
+
+        return redirect()->route('moderador.inicio', ['tab' => 'especialidades'])
+            ->with('success', 'Especialidad registrada exitosamente.')
+            ->with('tab', 'especialidades');
+    }
+
+    /**
+     * Update an existing especialidad.
+     */
+    public function updateEspecialidad(Request $request, Especialidad $especialidad)
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'section' => 'required|in:especialidad',
+        ]);
+
+        $especialidad->update([
+            'name' => $request->nombre,
+        ]);
+
+        return redirect()->back()->with(['success' => 'Especialidad actualizada correctamente', 'tab' => 'especialidades']);
+    }
+    /**
+     * Delete an existing especialidad.
+     */
+    public function deleteEspecialidad(Especialidad $especialidad)
+    {
+        // Ensure the moderator can only delete especialidades from their plantel
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+        if ($especialidad->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'No autorizado para eliminar esta especialidad.');
+        }
+
+        // Delete the especialidad
+        $especialidad->delete();
+
+        return redirect()->route('moderador.inicio', ['tab' => 'especialidades'])
+            ->with('success', 'Especialidad eliminada exitosamente.')
+            ->with('tab', 'especialidades');
+    }
+}"
+
+Web.php:"<?php
+
+use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ModController;
+
+// Mostrar login o redirigir al dashboard si ya hay sesión
+Route::get('/', function () {
+    if (Auth::check()) {
+        return match (Auth::user()->type) {
+            'administrador' => redirect()->route('admin.inicio'),
+            'moderador' => redirect()->route('moderador.inicio'),
+            default => redirect()->route('login.show'),
+        };
+    }
+
+    return view('auth.login');
+})->name('login.show');
+
+// Ruta para procesar el login
+Route::post('/', [AuthController::class, 'login'])->name('login');
+
+// Logout
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Panel administrador protegido
+Route::middleware('rol:administrador')->group(function () {
+    Route::get('/admin/inicio', [AdminController::class, 'inicio'])->name('admin.inicio');
+    Route::post('/admin/registrar-plantel', [AdminController::class, 'registrarPlantel'])->name('admin.registrar_plantel');
+    Route::post('/admin/registrar-moderador', [AdminController::class, 'registrarModerador'])->name('admin.registrar_moderador');
+    Route::delete('/admin/eliminar-plantel/{id}', [AdminController::class, 'eliminarPlantel'])->name('admin.eliminar_plantel');
+    Route::put('/admin/actualizar-plantel/{id}', [AdminController::class, 'actualizarPlantel'])->name('admin.actualizar_plantel');
+    Route::delete('/admin/eliminar-moderador/{id}', [AdminController::class, 'eliminarModerador'])->name('admin.eliminar_moderador');
+    Route::put('/admin/actualizar-moderador/{id}', [AdminController::class, 'actualizarModerador'])->name('admin.actualizar_moderador');
+});
+
+// Rutas existentes (asumidas, basadas en el partial de Empresas)
+
+Route::middleware(['rol:moderador'])->group(function () {
+    Route::get('/moderador/inicio', [ModController::class, 'inicio'])->name('moderador.inicio');
+    Route::post('/moderador/empresas', [ModController::class, 'registerEmpresa'])->name('moderador.registerEmpresa');
+    Route::put('/moderador/empresas/{empresa}', [ModController::class, 'updateEmpresa'])->name('moderador.updateEmpresa');
+    Route::delete('/moderador/empresas/{empresa}', [ModController::class, 'deleteEmpresa'])->name('moderador.deleteEmpresa');
+    Route::post('/moderador/instituciones', [ModController::class, 'registerInstitucion'])->name('moderador.registerInstitucion');
+    Route::put('/moderador/instituciones/{institucion}', [ModController::class, 'updateInstitucion'])->name('moderador.updateInstitucion');
+    Route::delete('/moderador/instituciones/{institucion}', [ModController::class, 'deleteInstitucion'])->name('moderador.deleteInstitucion');
+    Route::post('/moderador/maestros', [ModController::class, 'registerMaestro'])->name('moderador.registerMaestro');
+    Route::put('/moderador/maestros/{maestro}', [ModController::class, 'updateMaestro'])->name('moderador.updateMaestro');
+    Route::delete('/moderador/maestros/{maestro}', [ModController::class, 'deleteMaestro'])->name('moderador.deleteMaestro');
+    Route::post('/moderador/especialidades', [ModController::class, 'registerEspecialidad'])->name('moderador.registerEspecialidad');
+    Route::put('/moderador/especialidades/{especialidad}', [ModController::class, 'updateEspecialidad'])->name('moderador.updateEspecialidad');
+    Route::delete('/moderador/especialidades/{especialidad}', [ModController::class, 'deleteEspecialidad'])->name('moderador.deleteEspecialidad');
+});
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Route::get('/nada', function () {
+    return view('nada');
+})->name('nada');
+
+
+Route::get('/debug-logout', function () {
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/');
+});"
+
+resourses/views/moderador/inicio.blade.php:"@extends('layouts.base2')
+
+@push('vite')
+  @vite('resources/css/app.css')
+  <script src="https://unpkg.com/alpinejs" defer></script>
+@endpush
+
+@section('title', 'Panel Moderador')
+
+@section('main')
+<div x-data="{ tab: '{{ request()->query('tab', 'alumnos') }}', sidebarOpen: false }" class="flex flex-col md:flex-row flex-grow relative">
+  <!-- Hamburger Button (Mobile Only) -->
+  <button x-show="!sidebarOpen" @click="sidebarOpen = true" class="md:hidden fixed top-4 left-4 z-50 p-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+    </svg>
+  </button>
+
+  <!-- Sidebar (Desktop) -->
+  <aside class="hidden md:block w-full md:w-64 bg-[#202c54] text-white p-4 space-y-4">
+    <nav class="flex flex-col gap-2">
+      <a href="{{ route('moderador.inicio', ['tab' => 'alumnos']) }}"
+         :class="{ 'bg-[#2e3a68] text-white': tab === 'alumnos' }"
+         class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+        Alumnos
+      </a>
+      <a href="{{ route('moderador.inicio', ['tab' => 'instituciones']) }}"
+         :class="{ 'bg-[#2e3a68] text-white': tab === 'instituciones' || tab === 'maestros' || tab === 'especialidades' }"
+         class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+        Instituciones
+      </a>
+      <a href="{{ route('moderador.inicio', ['tab' => 'empresas']) }}"
+         :class="{ 'bg-[#2e3a68] text-white': tab === 'empresas' }"
+         class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+        Empresas
+      </a>
+    </nav>
+
+    <form method="POST" action="{{ route('logout') }}" class="pt-4 border-t border-white/20">
+      @csrf
+      <button type="submit"
+              class="w-full mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white font-semibold transition">
+        Cerrar sesión
+      </button>
+    </form>
+  </aside>
+
+  <!-- Mobile Sidebar and Overlay -->
+  <div x-show="sidebarOpen" x-cloak class="md:hidden">
+    <!-- Overlay -->
+    <div class="fixed inset-0 bg-gray-600 bg-opacity-50 z-40" @click="sidebarOpen = false"></div>
+    <!-- Sidebar -->
+    <aside x-transition:enter="transition ease-out duration-300"
+           x-transition:enter-start="transform -translate-x-full"
+           x-transition:enter-end="transform translate-x-0"
+           x-transition:leave="transition ease-in duration-300"
+           x-transition:leave-start="transform translate-x-0"
+           x-transition:leave-end="transform -translate-x-full"
+           class="fixed left-0 top-0 w-64 bg-[#202c54] text-white p-4 h-full z-50">
+      <button @click="sidebarOpen = false" class="mb-4 p-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <nav class="flex flex-col gap-2">
+        <a href="{{ route('moderador.inicio', ['tab' => 'alumnos']) }}"
+           @click="tab = 'alumnos'; sidebarOpen = false"
+           :class="{ 'bg-[#2e3a68] text-white': tab === 'alumnos' }"
+           class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+          Alumnos
+        </a>
+        <a href="{{ route('moderador.inicio', ['tab' => 'instituciones']) }}"
+           @click="tab = 'instituciones'; sidebarOpen = false"
+           :class="{ 'bg-[#2e3a68] text-white': tab === 'instituciones' || tab === 'maestros' || tab === 'especialidades' }"
+           class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+          Instituciones
+        </a>
+        <a href="{{ route('moderador.inicio', ['tab' => 'empresas']) }}"
+           @click="tab = 'empresas'; sidebarOpen = false"
+           :class="{ 'bg-[#2e3a68] text-white': tab === 'empresas' }"
+           class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+          Empresas
+        </a>
+      </nav>
+
+      <form method="POST" action="{{ route('logout') }}" class="pt-4 border-t border-white/20 mt-auto">
+        @csrf
+        <button type="submit"
+                class="w-full mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white font-semibold transition">
+          Cerrar sesión
+        </button>
+      </form>
+    </aside>
+  </div>
+
+  <!-- Contenido principal -->
+  <main class="flex-grow bg-white p-6">
+    <div x-show="tab === 'alumnos'" x-transition>
+      @include('moderador.partials.alumnos')
+    </div>
+
+    <div x-show="tab === 'instituciones' || tab === 'maestros' || tab === 'especialidades'" x-transition>
+      @include('moderador.partials.instituciones', ['subtab' => $tab])
+    </div>
+
+    <div x-show="tab === 'empresas'" x-transition>
+      @include('moderador.partials.empresas')
+    </div>
+  </main>
+</div>
+
+<style>
+  [x-cloak] { display: none; }
+  main {
+    position: relative;
+    z-index: 20;
+  }
+</style>
+@endsection"
+

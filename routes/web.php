@@ -1,10 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ModController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 // Mostrar login o redirigir al dashboard si ya hay sesión
 Route::get('/', function () {
@@ -24,7 +24,6 @@ Route::post('/', [AuthController::class, 'login'])->name('login');
 
 // Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Panel administrador protegido
 Route::middleware('rol:administrador')->group(function () {
@@ -37,8 +36,7 @@ Route::middleware('rol:administrador')->group(function () {
     Route::put('/admin/actualizar-moderador/{id}', [AdminController::class, 'actualizarModerador'])->name('admin.actualizar_moderador');
 });
 
-// Rutas existentes (asumidas, basadas en el partial de Empresas)
-
+// Panel moderador protegido
 Route::middleware(['rol:moderador'])->group(function () {
     Route::get('/moderador/inicio', [ModController::class, 'inicio'])->name('moderador.inicio');
     Route::post('/moderador/empresas', [ModController::class, 'registerEmpresa'])->name('moderador.registerEmpresa');
@@ -53,12 +51,16 @@ Route::middleware(['rol:moderador'])->group(function () {
     Route::post('/moderador/especialidades', [ModController::class, 'registerEspecialidad'])->name('moderador.registerEspecialidad');
     Route::put('/moderador/especialidades/{especialidad}', [ModController::class, 'updateEspecialidad'])->name('moderador.updateEspecialidad');
     Route::delete('/moderador/especialidades/{especialidad}', [ModController::class, 'deleteEspecialidad'])->name('moderador.deleteEspecialidad');
+    Route::post('/moderador/alumnos', [ModController::class, 'registerAlumno'])->name('moderador.registerAlumno');
+    Route::put('/moderador/alumnos/{alumno}', [ModController::class, 'updateAlumno'])->name('moderador.updateAlumno');
+    Route::delete('/moderador/alumnos/{alumno}', [ModController::class, 'deleteAlumno'])->name('moderador.deleteAlumno');
+    Route::get('/moderador/maestros-por-institucion/{institucion}', [ModController::class, 'getMaestrosPorInstitucion'])->name('moderador.maestrosPorInstitucion');
+    Route::get('/moderador/especialidades-por-institucion/{institucion}', [ModController::class, 'getEspecialidadesPorInstitucion'])->name('moderador.especialidadesPorInstitucion');
 });
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 Route::get('/nada', function () {
     return view('nada');
 })->name('nada');
-
 
 Route::get('/debug-logout', function () {
     Auth::logout();

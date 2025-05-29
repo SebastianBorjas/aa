@@ -7,13 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Alumno extends Model
 {
-    // Enable timestamps since the schema includes created_at/updated_at
     public $timestamps = true;
 
-    // Explicitly define the table name (optional, as Laravel would infer 'alumnos')
     protected $table = 'alumnos';
 
-    // Columns that are mass assignable
     protected $fillable = [
         'id_user',
         'id_plantel',
@@ -32,9 +29,9 @@ class Alumno extends Model
         'fecha_termino',
         'id_empresa',
         'id_maestro',
+        'id_institucion',
     ];
 
-    // Cast attributes to specific types
     protected $casts = [
         'lunes' => 'boolean',
         'martes' => 'boolean',
@@ -47,43 +44,33 @@ class Alumno extends Model
         'fecha_termino' => 'date',
     ];
 
-    /**
-     * An alumno belongs to a user
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id_user');
     }
 
-    /**
-     * An alumno belongs to a plantel
-     */
     public function plantel(): BelongsTo
     {
         return $this->belongsTo(Plantel::class, 'id_plantel');
     }
 
-    /**
-     * An alumno belongs to an especialidad
-     */
     public function especialidad(): BelongsTo
     {
         return $this->belongsTo(Especialidad::class, 'id_especialidad');
     }
 
-    /**
-     * An alumno belongs to an empresa
-     */
     public function empresa(): BelongsTo
     {
         return $this->belongsTo(Empresa::class, 'id_empresa');
     }
 
-    /**
-     * An alumno belongs to a maestro
-     */
     public function maestro(): BelongsTo
     {
         return $this->belongsTo(Maestro::class, 'id_maestro');
+    }
+
+    public function institucion(): BelongsTo
+    {
+        return $this->belongsTo(Institucion::class, 'id_institucion');
     }
 }
