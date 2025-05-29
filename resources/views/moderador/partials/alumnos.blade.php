@@ -3,7 +3,31 @@
     $alumnos = App\Models\Alumno::where('id_plantel', $moderador->id_plantel)->with(['user', 'empresa', 'institucion', 'maestro', 'especialidad'])->get();
 @endphp
 
-<div class="max-w-7xl mx-auto p-4" x-data="{ isFormOpenAlumno: {{ $errors->any() && old('section') == 'alumno' ? 'true' : 'false' }}, editIdAlumno: null, institucionId: '', maestros: [], especialidades: [], lunes: false, martes: false, miercoles: false, jueves: false, viernes: false, sabado: false, domingo: false, async fetchMaestros() { if (!this.institucionId) { this.maestros = []; this.especialidades = []; return; } const response = await fetch('/moderador/maestros-por-institucion/' + this.institucionId); this.maestros = await response.json(); const responseEsp = await fetch('/moderador/especialidades-por-institucion/' + this.institucionId); this.especialidades = await responseEsp.json(); }}">
+<div class="max-w-7xl mx-auto p-4" x-data="{
+    isFormOpenAlumno: {{ $errors->any() && old('section') == 'alumno' ? 'true' : 'false' }},
+    editIdAlumno: null,
+    institucionId: '{{ old('id_institucion') }}',
+    maestros: [],
+    especialidades: [],
+    lunes: {{ old('lunes', 0) ? 'true' : 'false' }},
+    martes: {{ old('martes', 0) ? 'true' : 'false' }},
+    miercoles: {{ old('miercoles', 0) ? 'true' : 'false' }},
+    jueves: {{ old('jueves', 0) ? 'true' : 'false' }},
+    viernes: {{ old('viernes', 0) ? 'true' : 'false' }},
+    sabado: {{ old('sabado', 0) ? 'true' : 'false' }},
+    domingo: {{ old('domingo', 0) ? 'true' : 'false' }},
+    async fetchMaestros() {
+        if (!this.institucionId) {
+            this.maestros = [];
+            this.especialidades = [];
+            return;
+        }
+        const response = await fetch('/moderador/maestros-por-institucion/' + this.institucionId);
+        this.maestros = await response.json();
+        const responseEsp = await fetch('/moderador/especialidades-por-institucion/' + this.institucionId);
+        this.especialidades = await responseEsp.json();
+    }
+}">
     <div class="flex flex-col lg:flex-row lg:space-x-6 space-y-6 lg:space-y-0">
         <!-- Left Side: Table -->
         <div class="w-full lg:w-2/3 bg-white rounded-lg shadow-md p-6">
@@ -110,19 +134,19 @@
                                 type="password" 
                                 id="alumno_contrasena_confirmation" 
                                 name="contrasena_confirmation"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                 placeholder="Confirma la contraseña"
                                 required
                             >
                         </div>
                         <div>
-                            <label for="alumno_nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
+                            <label for="alumno_name" class="block text-sm font-medium text-gray-700">Nombre</label>
                             <input 
                                 type="text" 
-                                id="alumno_nombre" 
+                                id="alumno_name" 
                                 name="nombre" 
                                 value="{{ old('nombre') }}"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                 placeholder="Ingresa el nombre"
                                 required
                             >
@@ -134,8 +158,8 @@
                                 id="alumno_telefono" 
                                 name="telefono" 
                                 value="{{ old('telefono') }}"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
-                                placeholder="Ingresa el teléfono"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
+                                placeholder="Teléfono"
                                 required
                             >
                         </div>
@@ -146,24 +170,24 @@
                                 id="alumno_telefono_emergencia" 
                                 name="telefono_emergencia" 
                                 value="{{ old('telefono_emergencia') }}"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
-                                placeholder="Ingresa el teléfono de emergencia"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
+                                placeholder="Teléfono de emergencia"
                                 required
                             >
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Días de Clase</label>
-                            <div class="flex gap-2 mt-1">
-                                @foreach (['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'] as $day)
+                            <div class="flex flex-wrap gap-2 mt-1">
+                                @foreach (['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'] as $en)
                                     <button 
                                         type="button" 
-                                        x-on:click="{{ $day }} = !{{ $day }}" 
-                                        :class="{{ $day }} ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'" 
+                                        x-on:click="{{ $en }} = !{{ $en }}" 
+                                        :class="{{ $en }} ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'" 
                                         class="px-3 py-1 rounded-md"
                                     >
-                                        {{ ucfirst($day) }}
+                                        {{ ucfirst($en) }}
                                     </button>
-                                    <input type="hidden" name="{{ $day }}" x-bind:value="{{ $day }} ? '1' : '0'">
+                                    <input type="hidden" name="{{ $en }}" x-bind:value="{{ $en }} ? 1 : 0">
                                 @endforeach
                             </div>
                         </div>
@@ -174,7 +198,7 @@
                                 id="alumno_fecha_inicio" 
                                 name="fecha_inicio" 
                                 value="{{ old('fecha_inicio') }}"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                 required
                             >
                         </div>
@@ -185,7 +209,7 @@
                                 id="alumno_fecha_termino" 
                                 name="fecha_termino" 
                                 value="{{ old('fecha_termino') }}"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                 required
                             >
                         </div>
@@ -194,7 +218,7 @@
                             <select 
                                 id="alumno_id_empresa" 
                                 name="id_empresa" 
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                 required
                             >
                                 <option value="" disabled {{ old('id_empresa') ? '' : 'selected' }}>Seleccione una empresa</option>
@@ -211,7 +235,7 @@
                             <select 
                                 id="alumno_id_institucion" 
                                 name="id_institucion" 
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                 required 
                                 x-model="institucionId" 
                                 @change="fetchMaestros()"
@@ -230,7 +254,7 @@
                             <select 
                                 id="alumno_id_maestro" 
                                 name="id_maestro" 
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                 required 
                                 :disabled="!institucionId"
                             >
@@ -245,7 +269,7 @@
                             <select 
                                 id="alumno_id_especialidad" 
                                 name="id_especialidad" 
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                 required 
                                 :disabled="!institucionId"
                             >
@@ -279,12 +303,24 @@
                 <div 
                     x-show="editIdAlumno === {{ $alumno->id }}"
                     class="bg-white rounded-lg shadow-md p-6"
+                    x-data="{
+                        lunes: {{ $alumno->lunes ? 'true' : 'false' }},
+                        martes: {{ $alumno->martes ? 'true' : 'false' }},
+                        miercoles: {{ $alumno->miercoles ? 'true' : 'false' }},
+                        jueves: {{ $alumno->jueves ? 'true' : 'false' }},
+                        viernes: {{ $alumno->viernes ? 'true' : 'false' }},
+                        sabado: {{ $alumno->sabado ? 'true' : 'false' }},
+                        domingo: {{ $alumno->domingo ? 'true' : 'false' }}
+                    }"
                 >
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Editar Alumno</h3>
                     <form method="POST" action="{{ route('moderador.updateAlumno', $alumno) }}">
                         @csrf
                         @method('PUT')
                         <input type="hidden" name="section" value="alumno">
+                        <input type="hidden" name="id_institucion" value="{{ $alumno->id_institucion }}">
+                        <input type="hidden" name="id_maestro" value="{{ $alumno->id_maestro }}">
+                        <input type="hidden" name="id_especialidad" value="{{ $alumno->id_especialidad }}">
                         <div class="space-y-4">
                             <div>
                                 <label for="alumno_correo_{{ $alumno->id }}" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
@@ -293,7 +329,7 @@
                                     id="alumno_correo_{{ $alumno->id }}" 
                                     name="correo" 
                                     value="{{ old('correo', $alumno->user->email) }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                     required
                                 >
                             </div>
@@ -303,7 +339,7 @@
                                     type="password" 
                                     id="alumno_contrasena_{{ $alumno->id }}" 
                                     name="contrasena"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                     placeholder="Ingresa nueva contraseña"
                                 >
                             </div>
@@ -313,18 +349,18 @@
                                     type="password" 
                                     id="alumno_contrasena_confirmation_{{ $alumno->id }}" 
                                     name="contrasena_confirmation"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                     placeholder="Confirma la contraseña"
                                 >
                             </div>
                             <div>
-                                <label for="alumno_nombre_{{ $alumno->id }}" class="block text-sm font-medium text-gray-700">Nombre</label>
+                                <label for="alumno_name_{{ $alumno->id }}" class="block text-sm font-medium text-gray-700">Nombre</label>
                                 <input 
                                     type="text" 
-                                    id="alumno_nombre_{{ $alumno->id }}" 
+                                    id="alumno_name_{{ $alumno->id }}" 
                                     name="nombre" 
                                     value="{{ old('nombre', $alumno->name) }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                     required
                                 >
                             </div>
@@ -335,7 +371,7 @@
                                     id="alumno_telefono_{{ $alumno->id }}" 
                                     name="telefono" 
                                     value="{{ old('telefono', $alumno->telefono) }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                     required
                                 >
                             </div>
@@ -346,23 +382,23 @@
                                     id="alumno_telefono_emergencia_{{ $alumno->id }}" 
                                     name="telefono_emergencia" 
                                     value="{{ old('telefono_emergencia', $alumno->telefono_emergencia) }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                     required
                                 >
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Días de Clase</label>
-                                <div class="flex gap-2 mt-1">
-                                    @foreach (['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'] as $day)
+                                <div class="flex flex-wrap gap-2 mt-1">
+                                    @foreach (['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'] as $en)
                                         <button 
                                             type="button" 
-                                            x-on:click="{{ $day }} = !{{ $day }}" 
-                                            :class="{{ $day }} ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'" 
+                                            x-on:click="{{ $en }} = !{{ $en }}" 
+                                            :class="{{ $en }} ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'" 
                                             class="px-3 py-1 rounded-md"
                                         >
-                                            {{ ucfirst($day) }}
+                                            {{ ucfirst($en) }}
                                         </button>
-                                        <input type="hidden" name="{{ $day }}" x-bind:value="{{ $day }} ? '1' : '0'" value="{{ old($day, $alumno->$day ? '1' : '0') }}">
+                                        <input type="hidden" name="{{ $en }}" x-bind:value="{{ $en }} ? 1 : 0">
                                     @endforeach
                                 </div>
                             </div>
@@ -373,7 +409,7 @@
                                     id="alumno_fecha_inicio_{{ $alumno->id }}" 
                                     name="fecha_inicio" 
                                     value="{{ old('fecha_inicio', $alumno->fecha_inicio->format('Y-m-d')) }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                     required
                                 >
                             </div>
@@ -384,7 +420,7 @@
                                     id="alumno_fecha_termino_{{ $alumno->id }}" 
                                     name="fecha_termino" 
                                     value="{{ old('fecha_termino', $alumno->fecha_termino->format('Y-m-d')) }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                     required
                                 >
                             </div>
@@ -393,59 +429,13 @@
                                 <select 
                                     id="alumno_id_empresa_{{ $alumno->id }}" 
                                     name="id_empresa" 
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500" 
                                     required
                                 >
                                     <option value="" disabled {{ old('id_empresa') ? '' : 'selected' }}>Seleccione una empresa</option>
                                     @foreach ($empresas as $empresa)
                                         <option value="{{ $empresa->id }}" {{ old('id_empresa', $alumno->id_empresa) == $empresa->id ? 'selected' : '' }}>{{ $empresa->name }}</option>
                                     @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label for="alumno_id_institucion_{{ $alumno->id }}" class="block text-sm font-medium text-gray-700">Institución</label>
-                                <select 
-                                    id="alumno_id_institucion_{{ $alumno->id }}" 
-                                    name="id_institucion" 
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
-                                    required 
-                                    x-model="institucionId" 
-                                    @change="fetchMaestros()"
-                                >
-                                    <option value="" disabled {{ old('id_institucion') ? '' : 'selected' }}>Seleccione una institución</option>
-                                    @foreach ($instituciones as $institucion)
-                                        <option value="{{ $institucion->id }}" {{ old('id_institucion', $alumno->id_institucion) == $institucion->id ? 'selected' : '' }}>{{ $institucion->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label for="alumno_id_maestro_{{ $alumno->id }}" class="block text-sm font-medium text-gray-700">Maestro</label>
-                                <select 
-                                    id="alumno_id_maestro_{{ $alumno->id }}" 
-                                    name="id_maestro" 
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
-                                    required 
-                                    :disabled="!institucionId"
-                                >
-                                    <option value="" disabled {{ old('id_maestro') ? '' : 'selected' }}>Seleccione un maestro</option>
-                                    <template x-for="maestro in maestros" :key="maestro.id">
-                                        <option :value="maestro.id" x-text="maestro.name" :selected="maestro.id == {{ old('id_maestro', $alumno->id_maestro) }}"></option>
-                                    </template>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="alumno_id_especialidad_{{ $alumno->id }}" class="block text-sm font-medium text-gray-700">Especialidad</label>
-                                <select 
-                                    id="alumno_id_especialidad_{{ $alumno->id }}" 
-                                    name="id_especialidad" 
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
-                                    required 
-                                    :disabled="!institucionId"
-                                >
-                                    <option value="" disabled {{ old('id_especialidad') ? '' : 'selected' }}>Seleccione una especialidad</option>
-                                    <template x-for="especialidad in especialidades" :key="especialidad.id">
-                                        <option :value="especialidad.id" x-text="especialidad.name" :selected="especialidad.id == {{ old('id_especialidad', $alumno->id_especialidad) }}"></option>
-                                    </template>
                                 </select>
                             </div>
                         </div>
