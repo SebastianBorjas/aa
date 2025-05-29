@@ -3,6 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ModController;
+use App\Http\Controllers\MaestroController;
+use App\Http\Controllers\AlumnoController; // Add AlumnoController
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -12,6 +14,8 @@ Route::get('/', function () {
         return match (Auth::user()->type) {
             'administrador' => redirect()->route('admin.inicio'),
             'moderador' => redirect()->route('moderador.inicio'),
+            'maestro' => redirect()->route('maestro.inicio'),
+            'alumno' => redirect()->route('alumno.inicio'), // Add alumno redirect
             default => redirect()->route('login.show'),
         };
     }
@@ -56,6 +60,16 @@ Route::middleware(['rol:moderador'])->group(function () {
     Route::delete('/moderador/alumnos/{alumno}', [ModController::class, 'deleteAlumno'])->name('moderador.deleteAlumno');
     Route::get('/moderador/maestros-por-institucion/{institucion}', [ModController::class, 'getMaestrosPorInstitucion'])->name('moderador.maestrosPorInstitucion');
     Route::get('/moderador/especialidades-por-institucion/{institucion}', [ModController::class, 'getEspecialidadesPorInstitucion'])->name('moderador.especialidadesPorInstitucion');
+});
+
+// Panel maestro protegido
+Route::middleware(['rol:maestro'])->group(function () {
+    Route::get('/maestro/inicio', [MaestroController::class, 'inicio'])->name('maestro.inicio');
+});
+
+// Panel alumno protegido
+Route::middleware(['rol:alumno'])->group(function () {
+    Route::get('/alumno/inicio', [AlumnoController::class, 'inicio'])->name('alumno.inicio');
 });
 
 Route::get('/nada', function () {
