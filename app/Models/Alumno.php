@@ -30,6 +30,7 @@ class Alumno extends Model
         'id_empresa',
         'id_maestro',
         'id_institucion',
+        'id_plan',
     ];
 
     protected $casts = [
@@ -72,5 +73,10 @@ class Alumno extends Model
     public function institucion(): BelongsTo
     {
         return $this->belongsTo(Institucion::class, 'id_institucion');
+    }
+
+    public function plan(): BelongsTo
+    {
+        return $this->belongsTo(Plan::class, 'id_plan');
     }
 }
