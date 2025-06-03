@@ -10,7 +10,7 @@
 @section('main')
 <div x-data="{ tab: '{{ request()->query('tab', 'alumnos') }}', sidebarOpen: false }" class="flex flex-col md:flex-row flex-grow relative">
   <!-- Hamburger Button (Mobile Only) -->
-  <button x-show="!sidebarOpen" @click="sidebarOpen = true" class="md:hidden fixed top-4 left-4 z-50 p-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+  <button x-show="!sidebarOpen" @click="sidebarOpen = true" class="md:hidden fixed top-4 left-4 z-50 p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
     </svg>
@@ -24,18 +24,17 @@
          class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
         Alumnos
       </a>
-      <a href="{{ route('maestro.inicio', ['tab' => 'revision']) }}"
-         :class="{ 'bg-[#2e3a68] text-white': tab === 'revision' }"
-         class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
-        Revisión
-      </a>
       <a href="{{ route('maestro.inicio', ['tab' => 'planes']) }}"
          :class="{ 'bg-[#2e3a68] text-white': tab === 'planes' }"
          class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
         Planes
       </a>
+      <a href="{{ route('maestro.inicio', ['tab' => 'revision']) }}"
+         :class="{ 'bg-[#2e3a68] text-white': tab === 'revision' }"
+         class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+        Revisión
+      </a>
     </nav>
-
     <form method="POST" action="{{ route('logout') }}" class="pt-4 border-t border-white/20">
       @csrf
       <button type="submit"
@@ -69,20 +68,19 @@
            class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
           Alumnos
         </a>
-        <a href="{{ route('maestro.inicio', ['tab' => 'revision']) }}"
-           @click="tab = 'revision'; sidebarOpen = false"
-           :class="{ 'bg-[#2e3a68] text-white': tab === 'revision' }"
-           class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
-          Revisión
-        </a>
         <a href="{{ route('maestro.inicio', ['tab' => 'planes']) }}"
            @click="tab = 'planes'; sidebarOpen = false"
            :class="{ 'bg-[#2e3a68] text-white': tab === 'planes' }"
            class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
           Planes
         </a>
+        <a href="{{ route('maestro.inicio', ['tab' => 'revision']) }}"
+           @click="tab = 'revision'; sidebarOpen = false"
+           :class="{ 'bg-[#2e3a68] text-white': tab === 'revision' }"
+           class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+          Revisión
+        </a>
       </nav>
-
       <form method="POST" action="{{ route('logout') }}" class="pt-4 border-t border-white/20 mt-auto">
         @csrf
         <button type="submit"
@@ -93,27 +91,31 @@
     </aside>
   </div>
 
-  <!-- Main Content -->
-  <main class="flex-grow bg-white p-6">
-    <div x-show="tab === 'alumnos'" x-transition>
+  <!-- Contenido principal -->
+  <!-- Contenido principal -->
+<main class="flex-grow bg-white p-6">
+  <template x-if="tab === 'alumnos'">
+    <div x-cloak>
       @include('maestro.partials.alumnos')
     </div>
-
-    <div x-show="tab === 'revision'" x-transition>
-      @include('maestro.partials.revision')
-    </div>
-
-    <div x-show="tab === 'planes'" x-transition>
+  </template>
+  <template x-if="tab === 'planes'">
+    <div x-cloak>
       @include('maestro.partials.planes')
     </div>
-  </main>
+  </template>
+  <template x-if="tab === 'revision'">
+    <div x-cloak>
+      @include('maestro.partials.revision')
+    </div>
+  </template>
+</main>
+
+
 </div>
 
 <style>
   [x-cloak] { display: none; }
-  main {
-    position: relative;
-    z-index: 20;
-  }
+  main { position: relative; z-index: 20; }
 </style>
 @endsection

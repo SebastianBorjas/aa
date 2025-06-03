@@ -62,10 +62,23 @@ Route::middleware(['rol:moderador'])->group(function () {
     Route::get('/moderador/especialidades-por-institucion/{institucion}', [ModController::class, 'getEspecialidadesPorInstitucion'])->name('moderador.especialidadesPorInstitucion');
 });
 
-// Panel maestro protegido
 Route::middleware(['rol:maestro'])->group(function () {
     Route::get('/maestro/inicio', [MaestroController::class, 'inicio'])->name('maestro.inicio');
+    Route::get('/maestro/planes/crear', [MaestroController::class, 'planesCrear'])->name('maestro.planes.crear');
+    Route::post('/maestro/planes/crear', [MaestroController::class, 'crearPlan'])->name('maestro.planes.store');
+
+    // NUEVAS rutas para CRUD de planes, temas y subtemas
+    Route::post('/maestro/planes/{id}/update', [MaestroController::class, 'actualizarPlan'])->name('maestro.planes.update');
+    Route::post('/maestro/planes/{id}/delete', [MaestroController::class, 'eliminarPlan'])->name('maestro.planes.delete');
+
+    Route::post('/maestro/temas/save', [MaestroController::class, 'guardarTema'])->name('maestro.temas.save');
+    Route::post('/maestro/temas/{id}/delete', [MaestroController::class, 'eliminarTema'])->name('maestro.temas.delete');
+
+    Route::post('/maestro/subtemas/save', [MaestroController::class, 'guardarSubtema'])->name('maestro.subtemas.save');
+    Route::post('/maestro/subtemas/{id}/delete', [MaestroController::class, 'eliminarSubtema'])->name('maestro.subtemas.delete');
 });
+
+
 
 // Panel alumno protegido
 Route::middleware(['rol:alumno'])->group(function () {

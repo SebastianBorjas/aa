@@ -1,12 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Revisión</h1>
-    <p>Contenido de la pestaña de revisión.</p>
-</body>
-</html>
+<div class="p-4">
+    <div class="text-center text-gray-500">
+        (Aquí iría la sección de revisión)
+    </div>
+</div>

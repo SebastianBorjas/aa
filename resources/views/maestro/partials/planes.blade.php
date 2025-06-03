@@ -1,12 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Planes</h1>
-    <p>Contenido de la pestaña de planes.</p>
-</body>
-</html>
+@php
+    $subtab = request()->query('subtab', 'crear_plan');
+@endphp
+
+<div class="p-4 max-w-full mx-auto" 
+    x-data="{
+        activeTab: '{{ $subtab }}'
+    }">
+    <!-- Tabs -->
+    <div class="mb-4">
+        <div class="flex flex-wrap gap-2 border-b border-gray-200 overflow-x-auto">
+            <a 
+                href="{{ route('maestro.inicio', ['tab' => 'planes', 'subtab' => 'crear_plan']) }}"
+                x-on:click="activeTab = 'crear_plan'"
+                :class="{ 'border-blue-500 text-blue-600': activeTab === 'crear_plan', 'text-gray-600': activeTab !== 'crear_plan' }"
+                class="px-4 py-2 font-medium border-b-2 flex-shrink-0 transition-colors duration-200"
+            >Planes</a>
+            <a 
+                href="{{ route('maestro.inicio', ['tab' => 'planes', 'subtab' => 'editar_plan']) }}"
+                x-on:click="activeTab = 'editar_plan'"
+                :class="{ 'border-blue-500 text-blue-600': activeTab === 'editar_plan', 'text-gray-600': activeTab !== 'editar_plan' }"
+                class="px-4 py-2 font-medium border-b-2 flex-shrink-0 transition-colors duration-200"
+            >Editar Plan</a>
+            <a 
+                href="{{ route('maestro.inicio', ['tab' => 'planes', 'subtab' => 'asignar_plan']) }}"
+                x-on:click="activeTab = 'asignar_plan'"
+                :class="{ 'border-blue-500 text-blue-600': activeTab === 'asignar_plan', 'text-gray-600': activeTab !== 'asignar_plan' }"
+                class="px-4 py-2 font-medium border-b-2 flex-shrink-0 transition-colors duration-200"
+            >Asignar Plan</a>
+        </div>
+    </div>
+    <div class="overflow-x-auto">
+        <div x-show="activeTab === 'crear_plan'" x-transition>
+            @php
+                // Llama al método del controlador para obtener la vista actualizada
+                echo app()->call('App\Http\Controllers\MaestroController@planesCrear')->render();
+            @endphp
+
+        </div>
+        <div x-show="activeTab === 'editar_plan'" x-transition>
+            @include('maestro.partials.planes.editar_plan')
+        </div>
+        <div x-show="activeTab === 'asignar_plan'" x-transition>
+            @include('maestro.partials.planes.asignar_plan')
+        </div>
+    </div>
+</div>
