@@ -64,13 +64,19 @@
                                 @endif
                             </div>
                         @else
-                            <div x-data="{ open: false }" class="mt-2">
+                            <div x-data="{ open: false, inputs: [1], add() { if(this.inputs.length < 4) this.inputs.push(Date.now()) }, remove(i){ this.inputs.splice(i,1) } }" class="mt-2">
                                 <button type="button" @click="open = !open" class="px-3 py-1 bg-green-600 text-white rounded shadow hover:bg-green-700">Entregar tarea</button>
                                 <div x-show="open" x-cloak class="mt-2 border rounded p-3 bg-white">
                                     <form method="POST" action="{{ route('alumno.entregar_tarea', $subtema->id) }}" enctype="multipart/form-data" class="space-y-2">
                                         @csrf
                                         <textarea name="contenido" rows="3" class="w-full border rounded p-2" placeholder="Contenido" required></textarea>
-                                        <input type="file" name="archivos[]" multiple class="w-full border rounded p-2">
+                                        <template x-for="(input, index) in inputs" :key="input">
+                                            <div class="flex items-center gap-2">
+                                                <input type="file" name="archivos[]" class="w-full border rounded p-2">
+                                                <button type="button" @click="remove(index)" class="text-red-600 text-sm">Eliminar</button>
+                                            </div>
+                                        </template>
+                                        <button type="button" @click="add" x-show="inputs.length < 4" class="px-2 py-1 bg-gray-200 rounded text-sm">Agregar archivo</button>
                                         <p class="text-xs text-gray-500">Máx. 4 archivos, 2MB cada uno.</p>
                                         <button type="submit" class="px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Enviar</button>
                                     </form>
