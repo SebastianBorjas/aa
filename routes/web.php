@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ModController;
 use App\Http\Controllers\MaestroController;
 use App\Http\Controllers\AlumnoController; // Add AlumnoController
+use App\Http\Controllers\EmpresaController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +17,7 @@ Route::get('/', function () {
             'moderador' => redirect()->route('moderador.inicio'),
             'maestro' => redirect()->route('maestro.inicio'),
             'alumno' => redirect()->route('alumno.inicio'), // Add alumno redirect
+            'empresa' => redirect()->route('empresa.inicio'), // Add empresa redirect
             default => redirect()->route('login.show'),
         };
     }
@@ -27,7 +29,8 @@ Route::get('/', function () {
 Route::post('/', [AuthController::class, 'login'])->name('login');
 
 // Logout
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+
 
 // Panel administrador protegido
 Route::middleware('rol:administrador')->group(function () {
@@ -89,6 +92,10 @@ Route::middleware(['rol:maestro'])->group(function () {
 Route::middleware(['rol:alumno'])->group(function () {
     Route::get('/alumno/inicio', [AlumnoController::class, 'inicio'])->name('alumno.inicio');
     Route::post('/alumno/subtemas/{subtema}/entregar', [AlumnoController::class, 'entregarTarea'])->name('alumno.entregar_tarea');
+});
+
+Route::middleware(['rol:empresa'])->group(function () {
+    Route::get('/empresa/inicio', [EmpresaController::class, 'inicio'])->name('empresa.inicio');
 });
 
 Route::get('/nada', function () {
