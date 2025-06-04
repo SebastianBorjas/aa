@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
+use Illuminate\Database\Eloquent\Relations\HasMany;
 class Alumno extends Model
 {
     public $timestamps = true;
@@ -78,5 +78,9 @@ class Alumno extends Model
     public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class, 'id_plan');
+    }
+    public function entregas(): HasMany
+    {
+        return $this->hasMany(Entrega::class, 'id_alumno');
     }
 }
