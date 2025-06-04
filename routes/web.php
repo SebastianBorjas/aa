@@ -96,6 +96,7 @@ Route::middleware(['rol:alumno'])->group(function () {
 
 Route::middleware(['rol:empresa'])->group(function () {
     Route::get('/empresa/inicio', [EmpresaController::class, 'inicio'])->name('empresa.inicio');
+    Route::post('/empresa/lista/guardar', [EmpresaController::class, 'guardarLista'])->name('empresa.guardarLista');
 });
 
 Route::get('/nada', function () {

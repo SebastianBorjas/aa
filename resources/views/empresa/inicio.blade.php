@@ -8,7 +8,7 @@
 @section('title', 'Panel empresa')
 
 @section('main')
-<div x-data="{ tab: 'alumnos', sidebarOpen: false }" class="flex flex-col md:flex-row flex-grow relative">
+<div x-data="{ tab: '{{ request('tab', 'alumnos') }}', sidebarOpen: false }" class="flex flex-col md:flex-row flex-grow relative">
   <!-- Botón Hamburguesa (Mobile) -->
   <button x-show="!sidebarOpen" @click="sidebarOpen = true" class="md:hidden fixed top-4 left-4 z-50 p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
