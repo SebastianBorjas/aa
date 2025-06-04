@@ -104,8 +104,12 @@
                                     <ul class="list-disc list-inside text-xs text-gray-600">
                                         <template x-for="ruta in subtema.rutas" :key="ruta">
                                             <li>
-                                                <a :href="'{{ asset('') }}' + ruta" target="_blank" class="text-blue-600 underline break-all"
-                                                    x-text="ruta.split('/').pop()"></a>
+                                                <a :href="'{{ asset('') }}' + ruta" target="_blank" class="flex items-center gap-1 text-blue-600 hover:underline">
+                                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 2h6l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                                                    </svg>
+                                                    <span class="truncate max-w-[90px]" x-text="ruta.split('/').pop()"></span>
+                                                </a>
                                             </li>
                                         </template>
                                     </ul>

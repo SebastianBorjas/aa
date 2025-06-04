@@ -143,7 +143,12 @@
                                     @if($subtema->rutas)
                                         @foreach($subtema->rutas as $i => $ruta)
                                             <div class="flex items-center gap-1 bg-blue-100 rounded px-2 py-1">
-                                                <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="underline text-blue-600 text-xs truncate max-w-[90px]">{{ basename($ruta) }}</a>
+                                                <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="flex items-center gap-1 text-blue-600 hover:underline text-xs max-w-[90px]">
+                                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 2h6l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                                                    </svg>
+                                                    <span class="truncate">{{ basename($ruta) }}</span>
+                                                </a>
                                                 <form method="POST" action="{{ route('maestro.subtemas.deletefile', $subtema->id) }}" onsubmit="return confirm('¿Eliminar este archivo?')">
                                                     @csrf
                                                     <input type="hidden" name="file_index" value="{{ $i }}">
