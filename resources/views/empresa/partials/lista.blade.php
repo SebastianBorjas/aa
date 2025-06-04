@@ -39,8 +39,7 @@
 <div class="space-y-4">
     <form method="GET" action="{{ route('empresa.inicio') }}" class="flex items-center space-x-2">
         <input type="hidden" name="tab" value="lista">
-        <input type="date" name="fecha" value="{{ $fecha->toDateString() }}" min="{{ $minFecha }}" max="{{ $maxFecha }}" class="border rounded px-2 py-1">
-        <button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded">Cambiar</button>
+        <input type="date" name="fecha" value="{{ $fecha->toDateString() }}" min="{{ $minFecha }}" max="{{ $maxFecha }}" class="border rounded px-2 py-1" onchange="this.form.submit()">
     </form>
 
     @if(session('success'))
@@ -68,8 +67,12 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach($alumnos as $alumno)
-                            @php $estado = $registros[$alumno->id]->estado ?? 'asistencia'; @endphp
-                            <tr>
+                            @php
+                                $registro = $registros[$alumno->id] ?? null;
+                                $estado = $registro->estado ?? 'asistencia';
+                                $registrado = !is_null($registro);
+                            @endphp
+                            <tr class="{{ $registrado ? 'bg-blue-50 border border-blue-800' : 'bg-green-50 border border-green-600' }}">
                                 <td class="px-3 py-2">{{ $alumno->name }}</td>
                                 <td class="px-3 py-2 text-center">
                                     <input type="radio" name="estado[{{ $alumno->id }}]" value="asistencia" {{ $estado == 'asistencia' ? 'checked' : '' }}>
