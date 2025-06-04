@@ -6,6 +6,7 @@ use App\Models\Plan;
 use App\Models\Tema;
 use App\Models\Subtema;
 use App\Models\Maestro;
+use App\Models\Alumno;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -185,5 +186,33 @@ class MaestroController extends Controller
             $subtema->save();
         }
         return back()->with('success', 'Archivo eliminado');
+    }
+    public function asignarPlan(Request $request)
+    {
+        $request->validate([
+            'plan' => 'required|integer|exists:planes,id',
+            'alumnos' => 'required|array',
+            'alumnos.*' => 'integer|exists:alumnos,id',
+        ]);
+
+        $maestro = Maestro::where('id_user', Auth::id())->first();
+        if (!$maestro) {
+            return back()->with('error', 'No tienes un perfil de maestro.');
+        }
+
+        // Verifica que el plan pertenezca al maestro
+        $plan = Plan::where('id', $request->plan)
+            ->where('id_maestro', $maestro->id)
+            ->firstOrFail();
+
+        // Actualiza solo alumnos del maestro
+        Alumno::whereIn('id', $request->alumnos)
+            ->where('id_maestro', $maestro->id)
+            ->update(['id_plan' => $plan->id]);
+
+        return redirect()->route('maestro.inicio', [
+            'tab' => 'planes',
+            'subtab' => 'asignar_plan',
+        ])->with('success', 'Plan asignado correctamente');
     }
 }

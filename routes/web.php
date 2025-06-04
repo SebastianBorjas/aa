@@ -78,6 +78,9 @@ Route::middleware(['rol:maestro'])->group(function () {
     Route::post('/maestro/subtemas/{id}/delete', [MaestroController::class, 'eliminarSubtema'])->name('maestro.subtemas.delete');
     Route::post('/maestro/subtemas/{id}/file', [MaestroController::class, 'subtemaAgregarArchivo'])->name('maestro.subtemas.addfile');
     Route::post('/maestro/subtemas/{id}/file-delete', [MaestroController::class, 'subtemaEliminarArchivo'])->name('maestro.subtemas.deletefile');
+
+    // Asignar plan a alumnos
+    Route::post('/maestro/asignar-plan', [MaestroController::class, 'asignarPlan'])->name('maestro.asignar_plan');
 });
 
 
