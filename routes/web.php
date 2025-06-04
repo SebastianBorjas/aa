@@ -76,6 +76,8 @@ Route::middleware(['rol:maestro'])->group(function () {
 
     Route::post('/maestro/subtemas/save', [MaestroController::class, 'guardarSubtema'])->name('maestro.subtemas.save');
     Route::post('/maestro/subtemas/{id}/delete', [MaestroController::class, 'eliminarSubtema'])->name('maestro.subtemas.delete');
+    Route::post('/maestro/subtemas/{id}/file', [MaestroController::class, 'subtemaAgregarArchivo'])->name('maestro.subtemas.addfile');
+    Route::post('/maestro/subtemas/{id}/file-delete', [MaestroController::class, 'subtemaEliminarArchivo'])->name('maestro.subtemas.deletefile');
 });
 
 

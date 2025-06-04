@@ -8,6 +8,8 @@ use App\Models\Subtema;
 use App\Models\Maestro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+
 
 
 class MaestroController extends Controller
@@ -109,27 +111,25 @@ class MaestroController extends Controller
         ])->with('success', 'Tema eliminado');
     }
 
-    // Crear o actualizar subtema
+    // Guardar o actualizar subtema (sin archivos)
     public function guardarSubtema(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'id_tema' => 'required|integer|exists:temas,id',
+            'nombre'      => 'required|string|max:255',
+            'id_tema'     => 'required|integer|exists:temas,id',
             'descripcion' => 'nullable|string',
-            'id' => 'nullable|integer|exists:subtemas,id',
+            'id'          => 'nullable|integer|exists:subtemas,id',
         ]);
+
         if ($request->filled('id')) {
             $subtema = Subtema::findOrFail($request->id);
             $subtema->update($request->only(['nombre', 'descripcion']));
         } else {
             Subtema::create($request->only(['id_tema', 'nombre', 'descripcion']));
         }
-        return redirect()->route('maestro.inicio', [
-            'tab' => 'planes',
-            'subtab' => 'crear_plan',
-            'planEdit' => $request->id_plan ?? Tema::find($request->id_tema)->id_plan ?? null
-        ])->with('success', 'Tema guardado');
+        return redirect()->back()->with('success', 'Subtema guardado');
     }
+
 
     // Eliminar subtema
     public function eliminarSubtema($id)
@@ -141,5 +141,49 @@ class MaestroController extends Controller
             'subtab' => 'crear_plan',
             'planEdit' => $subtema->id_tema ? Tema::find($subtema->id_tema)->id_plan : null
         ])->with('success', 'Subtema eliminado');
+    }
+    // AGREGAR ARCHIVOS a subtema
+    public function subtemaAgregarArchivo(Request $request, $id)
+    {
+        $request->validate([
+            'archivo' => 'required|file|max:2048', // 2MB
+        ]);
+
+        $subtema = Subtema::findOrFail($id);
+
+        // Revisar cuantos archivos hay ya
+        $rutas = $subtema->rutas ?: [];
+        if (count($rutas) >= 4) {
+            return back()->with('error', 'Solo se permiten máximo 4 archivos por subtema');
+        }
+
+        // Guardar archivo
+        $file = $request->file('archivo');
+        $path = $file->store('subtemas', 'public');
+        $rutas[] = $path;
+        $subtema->rutas = $rutas;
+        $subtema->save();
+
+        return back()->with('success', 'Archivo subido correctamente');
+    }
+    // ELIMINAR ARCHIVO de subtema
+    public function subtemaEliminarArchivo(Request $request, $id)
+    {
+        $request->validate([
+            'file_index' => 'required|integer|min:0',
+        ]);
+        $subtema = Subtema::findOrFail($id);
+        $rutas = $subtema->rutas ?: [];
+        $index = $request->file_index;
+
+        if (isset($rutas[$index])) {
+            // Elimina archivo físico
+            Storage::disk('public')->delete($rutas[$index]);
+            // Elimina ruta del array
+            array_splice($rutas, $index, 1);
+            $subtema->rutas = $rutas;
+            $subtema->save();
+        }
+        return back()->with('success', 'Archivo eliminado');
     }
 }
