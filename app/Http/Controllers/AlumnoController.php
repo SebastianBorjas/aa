@@ -6,6 +6,7 @@ use App\Models\Subtema;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Alumno;
+use Illuminate\Support\Facades\Storage;
 class AlumnoController extends Controller
 {
     public function inicio(Request $request)
@@ -44,13 +45,22 @@ class AlumnoController extends Controller
         }
 
         $rutasActuales = $entrega?->rutas ?? [];
+        // Eliminar archivos seleccionados
+        $eliminar = $request->input('delete_files', []);
+        foreach ($eliminar as $index) {
+            if (isset($rutasActuales[$index])) {
+                Storage::disk('public')->delete($rutasActuales[$index]);
+                unset($rutasActuales[$index]);
+            }
+        }
+        $rutasActuales = array_values($rutasActuales);
         $rutasNuevas = [];
         if ($request->hasFile('archivos')) {
             foreach ($request->file('archivos') as $file) {
                 $rutasNuevas[] = $file->store('entregas', 'public');
             }
         }
-        
+
         if (count($rutasActuales) + count($rutasNuevas) > 4) {
             return back()->with('error', 'Máx. 4 archivos.');
         }

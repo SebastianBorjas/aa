@@ -100,6 +100,24 @@
                                         <form method="POST" action="{{ route('alumno.entregar_tarea', $subtema->id) }}" enctype="multipart/form-data" class="space-y-2">
                                             @csrf
                                             <textarea name="contenido" rows="3" class="w-full border rounded p-2" required>{{ $entrega->contenido }}</textarea>
+                                            @if($entrega->rutas)
+                                                <ul class="list-disc ml-5 text-sm space-y-1">
+                                                    @foreach($entrega->rutas as $idx => $ruta)
+                                                        <li class="flex items-center gap-2">
+                                                            <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="flex items-center gap-1 text-blue-600 hover:underline max-w-[150px]">
+                                                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 2h6l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                                                                </svg>
+                                                                <span class="truncate">{{ basename($ruta) }}</span>
+                                                            </a>
+                                                            <label class="flex items-center gap-1 text-red-600 text-xs">
+                                                                <input type="checkbox" name="delete_files[]" value="{{ $idx }}">
+                                                                Eliminar
+                                                            </label>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            @endif
                                             <template x-for="(input, index) in inputs" :key="input">
                                                 <div class="flex items-center gap-2">
                                                     <input type="file" name="archivos[]" class="w-full border rounded p-2">
