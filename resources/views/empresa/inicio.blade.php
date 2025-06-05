@@ -28,7 +28,7 @@
   </button>
 
   <!-- Sidebar (Desktop) -->
-  <aside class="hidden md:block w-full md:w-64 bg-[#202c54] text-white p-4 space-y-4">
+  <aside class="hidden md:block w-full md:w-64 bg-[#202c54] text-white p-4 space-y-4 md:sticky md:top-0 md:h-screen md:overflow-y-auto">
     <nav class="flex flex-col gap-2">
       <button @click="tab = 'alumnos'" :class="{ 'bg-[#2e3a68] text-white': tab === 'alumnos' }" class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
         Alumnos

@@ -89,6 +89,7 @@
                                 @endif
                                 @if($entrega->estado === 'verificado' && $entrega->vcm)
                                     <div class="mt-2 p-2 bg-blue-50 border border-blue-300 rounded text-sm text-blue-700 whitespace-pre-line">
+                                        <strong>Comentario del maestro:</strong><br>
                                         {{ $entrega->vcm }}
                                     </div>
                                 @endif
