@@ -81,11 +81,7 @@ class AdminController extends Controller
     public function eliminarModerador($id)
     {
         $moderador = Moderador::findOrFail($id);
-        $userId = $moderador->user->id;
-        DB::transaction(function () use ($moderador, $userId) {
-            $moderador->user->delete();
-            $moderador->delete();
-        });
+        $moderador->delete();
 
         return response()->json(['message' => 'Moderador eliminado']);
     }

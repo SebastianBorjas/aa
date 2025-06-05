@@ -93,7 +93,7 @@ class ModController extends Controller
     }
 
     /**
-     * Delete an existing empresa and its associated user.
+     * Delete an existing empresa.
      */
     public function deleteEmpresa(Empresa $empresa)
     {
@@ -102,7 +102,6 @@ class ModController extends Controller
             abort(403, 'No autorizado para eliminar esta empresa.');
         }
 
-        $empresa->user->delete();
         $empresa->delete();
 
         return redirect()->route('moderador.inicio', ['tab' => 'empresas'])
@@ -253,7 +252,7 @@ class ModController extends Controller
     }
 
     /**
-     * Delete an existing maestro and its associated user.
+     * Delete an existing maestro.
      */
     public function deleteMaestro(Maestro $maestro)
     {
@@ -262,7 +261,6 @@ class ModController extends Controller
             abort(403, 'No autorizado para eliminar este maestro.');
         }
 
-        $maestro->user->delete();
         $maestro->delete();
 
         return redirect()->route('moderador.inicio', ['tab' => 'maestros'])
@@ -491,7 +489,7 @@ class ModController extends Controller
     }
 
     /**
-     * Delete an existing alumno and its associated user.
+     * Delete an existing alumno.
      */
     public function deleteAlumno(Alumno $alumno)
     {
