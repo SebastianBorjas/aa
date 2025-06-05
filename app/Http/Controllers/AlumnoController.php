@@ -26,7 +26,11 @@ class AlumnoController extends Controller
         $alumno = Alumno::where('id_user', Auth::id())->firstOrFail();
         Subtema::findOrFail($subtemaId);
 
-        if (Entrega::where('id_subtema', $subtemaId)->where('id_alumno', $alumno->id)->exists()) {
+        $entrega = Entrega::where('id_subtema', $subtemaId)
+            ->where('id_alumno', $alumno->id)
+            ->first();
+
+        if ($entrega && $entrega->estado !== 'rechazado') {
             return back()->with('error', 'Ya enviaste esta tarea.');
         }
 
@@ -46,13 +50,23 @@ class AlumnoController extends Controller
             }
         }
 
-        Entrega::create([
-            'id_subtema' => $subtemaId,
-            'id_alumno' => $alumno->id,
-            'contenido' => $request->contenido,
-            'rutas' => $rutas,
-            'estado' => 'pen_emp', // ← Aquí se guarda con el estado solicitado
-        ]);
+        if ($entrega) {
+            $entrega->update([
+                'contenido' => $request->contenido,
+                'rutas' => $rutas,
+                'estado' => 'pen_emp',
+                'rce' => null,
+                'rcm' => null,
+            ]);
+        } else {
+            Entrega::create([
+                'id_subtema' => $subtemaId,
+                'id_alumno' => $alumno->id,
+                'contenido' => $request->contenido,
+                'rutas' => $rutas,
+                'estado' => 'pen_emp',
+            ]);
+        }
 
         return redirect()->route('alumno.inicio', ['tab' => 'tareas'])->with('success', 'Tarea enviada');
     }

@@ -97,6 +97,8 @@ Route::middleware(['rol:alumno'])->group(function () {
 Route::middleware(['rol:empresa'])->group(function () {
     Route::get('/empresa/inicio', [EmpresaController::class, 'inicio'])->name('empresa.inicio');
     Route::post('/empresa/lista/guardar', [EmpresaController::class, 'guardarLista'])->name('empresa.guardarLista');
+    Route::post('/empresa/entregas/{entrega}/verificar', [EmpresaController::class, 'verificarEntrega'])->name('empresa.entregas.verificar');
+    Route::post('/empresa/entregas/{entrega}/rechazar', [EmpresaController::class, 'rechazarEntrega'])->name('empresa.entregas.rechazar');
 });
 
 Route::get('/nada', function () {

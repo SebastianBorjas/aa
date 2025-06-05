@@ -6,6 +6,7 @@ use App\Models\Lista;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Models\Entrega;
 
 class EmpresaController extends Controller
 {
@@ -44,5 +45,44 @@ class EmpresaController extends Controller
         return redirect()
             ->route('empresa.inicio', ['tab' => 'lista', 'fecha' => $fecha->toDateString()])
             ->with('success', 'Lista guardada');
+    }
+    public function verificarEntrega(Request $request, Entrega $entrega)
+    {
+        $empresa = Empresa::where('id_user', Auth::id())->firstOrFail();
+
+        if ($entrega->alumno->id_empresa !== $empresa->id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'comentario' => 'nullable|string',
+        ]);
+
+        $entrega->update([
+            'estado' => 'pen_mae',
+            'vce' => $request->comentario,
+        ]);
+
+        return back()->with('success', 'Entrega enviada al maestro.');
+    }
+
+    public function rechazarEntrega(Request $request, Entrega $entrega)
+    {
+        $empresa = Empresa::where('id_user', Auth::id())->firstOrFail();
+
+        if ($entrega->alumno->id_empresa !== $empresa->id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'comentario' => 'nullable|string',
+        ]);
+
+        $entrega->update([
+            'estado' => 'rechazado',
+            'rce' => $request->comentario,
+        ]);
+
+        return back()->with('success', 'Entrega rechazada.');
     }
 }

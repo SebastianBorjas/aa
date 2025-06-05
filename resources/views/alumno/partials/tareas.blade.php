@@ -46,7 +46,25 @@
 
                         @if($entrega)
                             <div class="mt-2 bg-green-50 border border-green-200 rounded p-3">
-                                <div class="font-semibold text-green-700 mb-1">Tu entrega</div>
+                                <div class="font-semibold text-green-700 mb-1">
+                                    Tu entrega
+                                    @php
+                                        $estadoText = [
+                                            'pen_emp' => 'pendiente empresa',
+                                            'pen_mae' => 'pendiente maestro',
+                                            'verificado' => 'verificado',
+                                            'rechazado' => 'rechazado',
+                                        ][$entrega->estado] ?? $entrega->estado;
+                                        $estadoColor = match($entrega->estado) {
+                                            'pen_emp' => 'bg-yellow-100 text-yellow-800',
+                                            'pen_mae' => 'bg-blue-100 text-blue-800',
+                                            'verificado' => 'bg-green-100 text-green-800',
+                                            'rechazado' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800'
+                                        };
+                                    @endphp
+                                    <span class="ml-2 text-xs px-2 py-0.5 rounded {{ $estadoColor }}">{{ $estadoText }}</span>
+                                </div>
                                 <div class="text-sm whitespace-pre-line">{{ $entrega->contenido }}</div>
                                 @if($entrega->rutas)
                                     <ul class="list-disc ml-5 mt-2 text-sm">
@@ -62,7 +80,33 @@
                                         @endforeach
                                     </ul>
                                 @endif
+
+                                @if($entrega->estado === 'rechazado' && ($entrega->rce || $entrega->rcm))
+                                    <div class="mt-2 p-2 bg-red-50 border border-red-300 rounded text-sm text-red-700 whitespace-pre-line">
+                                        {{ $entrega->rce ?? $entrega->rcm }}
+                                    </div>
+                                @endif
                             </div>
+                            @if($entrega->estado === 'rechazado')
+                                <div x-data="{ open: false, inputs: [1], add() { if(this.inputs.length < 4) this.inputs.push(Date.now()) }, remove(i){ this.inputs.splice(i,1) } }" class="mt-2">
+                                    <button type="button" @click="open = !open" class="px-3 py-1 bg-green-600 text-white rounded shadow hover:bg-green-700">Reenviar tarea</button>
+                                    <div x-show="open" x-cloak class="mt-2 border rounded p-3 bg-white">
+                                        <form method="POST" action="{{ route('alumno.entregar_tarea', $subtema->id) }}" enctype="multipart/form-data" class="space-y-2">
+                                            @csrf
+                                            <textarea name="contenido" rows="3" class="w-full border rounded p-2" required>{{ $entrega->contenido }}</textarea>
+                                            <template x-for="(input, index) in inputs" :key="input">
+                                                <div class="flex items-center gap-2">
+                                                    <input type="file" name="archivos[]" class="w-full border rounded p-2">
+                                                    <button type="button" @click="remove(index)" class="text-red-600 text-sm">Eliminar</button>
+                                                </div>
+                                            </template>
+                                            <button type="button" @click="add" x-show="inputs.length < 4" class="px-2 py-1 bg-gray-200 rounded text-sm">Agregar archivo</button>
+                                            <p class="text-xs text-gray-500">Máx. 4 archivos, 2MB cada uno.</p>
+                                            <button type="submit" class="px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Enviar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endif
                         @else
                             <div x-data="{ open: false, inputs: [1], add() { if(this.inputs.length < 4) this.inputs.push(Date.now()) }, remove(i){ this.inputs.splice(i,1) } }" class="mt-2">
                                 <button type="button" @click="open = !open" class="px-3 py-1 bg-green-600 text-white rounded shadow hover:bg-green-700">Entregar tarea</button>
