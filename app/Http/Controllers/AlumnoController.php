@@ -51,8 +51,10 @@ class AlumnoController extends Controller
             'id_alumno' => $alumno->id,
             'contenido' => $request->contenido,
             'rutas' => $rutas,
+            'estado' => 'pen_emp', // ← Aquí se guarda con el estado solicitado
         ]);
 
         return redirect()->route('alumno.inicio', ['tab' => 'tareas'])->with('success', 'Tarea enviada');
     }
+
 }

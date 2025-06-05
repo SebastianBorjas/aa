@@ -16,6 +16,11 @@ class Entrega extends Model
         'id_alumno',
         'contenido',
         'rutas',
+        'estado',
+        'rce',
+        'rcm',
+        'vce',
+        'vcm',
     ];
 
     protected $casts = [
