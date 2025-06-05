@@ -43,12 +43,19 @@ class AlumnoController extends Controller
             return back()->with('error', 'Máx. 4 archivos.');
         }
 
-        $rutas = [];
+        $rutasActuales = $entrega?->rutas ?? [];
+        $rutasNuevas = [];
         if ($request->hasFile('archivos')) {
             foreach ($request->file('archivos') as $file) {
-                $rutas[] = $file->store('entregas', 'public');
+                $rutasNuevas[] = $file->store('entregas', 'public');
             }
         }
+        
+        if (count($rutasActuales) + count($rutasNuevas) > 4) {
+            return back()->with('error', 'Máx. 4 archivos.');
+        }
+
+        $rutas = array_merge($rutasActuales, $rutasNuevas);
 
         if ($entrega) {
             $entrega->update([

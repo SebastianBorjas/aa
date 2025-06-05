@@ -84,6 +84,9 @@ Route::middleware(['rol:maestro'])->group(function () {
 
     // Asignar plan a alumnos
     Route::post('/maestro/asignar-plan', [MaestroController::class, 'asignarPlan'])->name('maestro.asignar_plan');
+
+    Route::post('/maestro/entregas/{entrega}/verificar', [MaestroController::class, 'verificarEntrega'])->name('maestro.entregas.verificar');
+    Route::post('/maestro/entregas/{entrega}/rechazar', [MaestroController::class, 'rechazarEntrega'])->name('maestro.entregas.rechazar');
 });
 
 

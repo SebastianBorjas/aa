@@ -83,7 +83,13 @@
 
                                 @if($entrega->estado === 'rechazado' && ($entrega->rce || $entrega->rcm))
                                     <div class="mt-2 p-2 bg-red-50 border border-red-300 rounded text-sm text-red-700 whitespace-pre-line">
-                                        {{ $entrega->rce ?? $entrega->rcm }}
+                                        <strong>{{ $entrega->rce ? 'Rechazado por empresa:' : 'Rechazado por maestro:' }}</strong>
+                                        <br>{{ $entrega->rce ?? $entrega->rcm }}
+                                    </div>
+                                @endif
+                                @if($entrega->estado === 'verificado' && $entrega->vcm)
+                                    <div class="mt-2 p-2 bg-blue-50 border border-blue-300 rounded text-sm text-blue-700 whitespace-pre-line">
+                                        {{ $entrega->vcm }}
                                     </div>
                                 @endif
                             </div>

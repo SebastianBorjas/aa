@@ -7,6 +7,7 @@ use App\Models\Tema;
 use App\Models\Subtema;
 use App\Models\Maestro;
 use App\Models\Alumno;
+use App\Models\Entrega;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -214,5 +215,45 @@ class MaestroController extends Controller
             'tab' => 'planes',
             'subtab' => 'asignar_plan',
         ])->with('success', 'Plan asignado correctamente');
+    }
+
+    public function verificarEntrega(Request $request, Entrega $entrega)
+    {
+        $maestro = Maestro::where('id_user', Auth::id())->firstOrFail();
+
+        if ($entrega->alumno->id_maestro !== $maestro->id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'comentario' => 'nullable|string',
+        ]);
+
+        $entrega->update([
+            'estado' => 'verificado',
+            'vcm' => $request->comentario,
+        ]);
+
+        return back()->with('success', 'Entrega verificada.');
+    }
+
+    public function rechazarEntrega(Request $request, Entrega $entrega)
+    {
+        $maestro = Maestro::where('id_user', Auth::id())->firstOrFail();
+
+        if ($entrega->alumno->id_maestro !== $maestro->id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'comentario' => 'nullable|string',
+        ]);
+
+        $entrega->update([
+            'estado' => 'rechazado',
+            'rcm' => $request->comentario,
+        ]);
+
+        return back()->with('success', 'Entrega rechazada.');
     }
 }
