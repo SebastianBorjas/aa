@@ -333,7 +333,12 @@
                         <p><strong>Especialidad:</strong> {{ $alumno->especialidad->name ?? 'N/A' }}</p>
                     </div>
 
-                    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mt-4 flex justify-end space-x-3">
+                        <button type="button" x-on:click="isEditModeAlumno = true" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Editar</button>
+                        <button type="button" x-on:click="editIdAlumno = null" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition">Cerrar</button>
+                    </div>
+
+                    <div class="mt-6">
                         <!-- Static Calendar -->
                         <div class="bg-gray-100 p-4 rounded"
                              x-data='calendar(
@@ -373,25 +378,19 @@
                             </div>
                         </div>
 
-                        <!-- Static Aesthetic Chart -->
-                        <div class="bg-gray-100 p-4 rounded">
-                            <p class="text-sm font-medium text-gray-600 mb-2">Gráfica</p>
-                            <canvas id="fakeChart{{ $alumno->id }}" style="height: 150px;"></canvas>
-                            <style>
-                                #fakeChart{{ $alumno->id }} {
-                                    background: linear-gradient(to right, #4ade80 30%, #22c55e 60%, #15803d 100%);
-                                    border-radius: 8px;
-                                    width: 100%;
-                                }
-                            </style>
-                        </div>
                     </div>
-                    <div class="mt-4" x-data="editAttendance(@json($attendanceData))" x-init="fecha='{{ now()->toDateString() }}'; updateEstado()">
+                    @php $maxDate = min($alumno->fecha_termino->format('Y-m-d'), now()->toDateString()); @endphp
+                    <div class="mt-4" x-data="editAttendance(
+                            @json($attendanceData),
+                            '{{ $alumno->fecha_inicio->format('Y-m-d') }}',
+                            '{{ $alumno->fecha_termino->format('Y-m-d') }}',
+                            @json($diasActivos)
+                        )" x-init="fecha='{{ now()->toDateString() }}'; updateEstado()">
                         <form method="POST" action="{{ route('moderador.guardarListaAlumno', $alumno) }}" class="space-y-3">
                             @csrf
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Fecha</label>
-                                <input type="date" name="fecha" x-model="fecha" @change="updateEstado()" min="{{ $alumno->fecha_inicio->format('Y-m-d') }}" max="{{ $alumno->fecha_termino->format('Y-m-d') }}" class="mt-1 block w-full rounded-md border-gray-300" />
+                                <input type="date" name="fecha" x-model="fecha" @change="updateEstado()" min="{{ $alumno->fecha_inicio->format('Y-m-d') }}" max="{{ $maxDate }}" class="mt-1 block w-full rounded-md border-gray-300" />
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Estado</label>
@@ -401,12 +400,8 @@
                                     <option value="justificado">Justificado</option>
                                 </select>
                             </div>
-                            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Guardar lista</button>
+                            <button type="submit" :disabled="!isValidDate(fecha)" class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50">Guardar lista</button>
                         </form>
-                    </div>
-                    <div class="mt-6 flex justify-end space-x-3">
-                        <button type="button" x-on:click="isEditModeAlumno = true" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Editar</button>
-                        <button type="button" x-on:click="editIdAlumno = null" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition">Cerrar</button>
                     </div>
                 </div>
 
@@ -637,18 +632,34 @@
                         if (shouldAttend && !rec && isPastOrToday) {
                             estado = 'no_lista';
                         }
-                        const disabled = !inRange || dateObj > today;
+                        const disabled = !inRange || dateObj > today || !shouldAttend;
                         return { day: day, estado: estado, disabled: disabled };
                     });
                 }
             };
         }
-        function editAttendance(records = []) {
+        function editAttendance(records = [], start = null, end = null, activeDays = []) {
             return {
                 records: records,
                 fecha: '',
                 estado: 'asistencia',
+                startDate: start ? new Date(start) : null,
+                endDate: end ? new Date(end) : null,
+                activeDays: activeDays,
+                isValidDate(dateStr) {
+                    if (!dateStr) return false;
+                    const d = new Date(dateStr);
+                    d.setHours(0,0,0,0);
+                    const today = new Date();
+                    today.setHours(0,0,0,0);
+                    if (this.startDate && d < this.startDate) return false;
+                    if (this.endDate && d > this.endDate) return false;
+                    if (d > today) return false;
+                    if (!this.activeDays.includes(d.getDay())) return false;
+                    return true;
+                },
                 updateEstado() {
+                    if (!this.isValidDate(this.fecha)) { this.estado = 'asistencia'; return; }
                     const rec = this.records.find(r => r.fecha === this.fecha);
                     this.estado = rec ? rec.estado : 'asistencia';
                 }
