@@ -6,6 +6,7 @@
 <div class="max-w-7xl mx-auto p-4" x-data="{
     isFormOpenAlumno: {{ $errors->any() && old('section') == 'alumno' ? 'true' : 'false' }},
     editIdAlumno: null,
+    isEditModeAlumno: false,
     institucionId: '{{ old('id_institucion') }}',
     maestros: [],
     especialidades: [],
@@ -75,8 +76,8 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-300">
                             @foreach ($alumnos as $alumno)
-                                <tr 
-                                    x-on:click="editIdAlumno = editIdAlumno === {{ $alumno->id }} ? null : {{ $alumno->id }}; isFormOpenAlumno = false" 
+                                <tr
+                                    x-on:click="editIdAlumno = editIdAlumno === {{ $alumno->id }} ? null : {{ $alumno->id }}; isFormOpenAlumno = false; isEditModeAlumno = false"
                                     class="cursor-pointer hover:bg-gray-200 transition"
                                     :class="{ 'bg-gray-200': editIdAlumno === {{ $alumno->id }} }"
                                 >
@@ -298,10 +299,69 @@
                 </form>
             </div>
 
-            <!-- Edit Form -->
+            <!-- Detail and Edit -->
             @foreach ($alumnos as $alumno)
-                <div 
-                    x-show="editIdAlumno === {{ $alumno->id }}"
+                <!-- View Details -->
+                <div
+                    x-show="editIdAlumno === {{ $alumno->id }} && !isEditModeAlumno"
+                    class="bg-white rounded-lg shadow-md p-6"
+                >
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Información del Alumno</h3>
+                    <div class="space-y-2">
+                        <p><strong>Correo:</strong> {{ $alumno->user->email }}</p>
+                        <p><strong>Nombre:</strong> {{ $alumno->name }}</p>
+                        <p><strong>Teléfono:</strong> {{ $alumno->telefono }}</p>
+                        <p><strong>Teléfono Emergencia:</strong> {{ $alumno->telefono_emergencia }}</p>
+                        <p><strong>Empresa:</strong> {{ $alumno->empresa->name ?? 'N/A' }}</p>
+                        <p><strong>Institución:</strong> {{ $alumno->institucion->name ?? 'N/A' }}</p>
+                        <p><strong>Especialidad:</strong> {{ $alumno->especialidad->name ?? 'N/A' }}</p>
+                    </div>
+
+                    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Static Calendar -->
+                        <div class="bg-gray-100 p-4 rounded" x-data="calendar()" x-init="init()">
+                            <div class="flex items-center justify-between mb-2">
+                                <button type="button" @click="prevMonth" class="text-sm px-2 py-1 bg-gray-200 rounded">&#8249;</button>
+                                <div class="text-sm font-semibold" x-text="monthNames[currentMonth] + ' ' + currentYear"></div>
+                                <button type="button" @click="nextMonth" class="text-sm px-2 py-1 bg-gray-200 rounded">&#8250;</button>
+                            </div>
+                            <div class="grid grid-cols-7 text-xs font-semibold text-center">
+                                <template x-for="day in dayNames" :key="day">
+                                    <div class="py-1" x-text="day"></div>
+                                </template>
+                            </div>
+                            <div class="grid grid-cols-7 text-center text-sm">
+                                <template x-for="blank in blanks" :key="'b' + blank">
+                                    <div></div>
+                                </template>
+                                <template x-for="date in dates" :key="date">
+                                    <div class="py-1" x-text="date"></div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Static Aesthetic Chart -->
+                        <div class="bg-gray-100 p-4 rounded">
+                            <p class="text-sm font-medium text-gray-600 mb-2">Gráfica</p>
+                            <canvas id="fakeChart{{ $alumno->id }}" style="height: 150px;"></canvas>
+                            <style>
+                                #fakeChart{{ $alumno->id }} {
+                                    background: linear-gradient(to right, #4ade80 30%, #22c55e 60%, #15803d 100%);
+                                    border-radius: 8px;
+                                    width: 100%;
+                                }
+                            </style>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button" x-on:click="isEditModeAlumno = true" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Editar</button>
+                        <button type="button" x-on:click="editIdAlumno = null" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition">Cerrar</button>
+                    </div>
+                </div>
+
+                <!-- Edit Form -->
+                <div
+                    x-show="editIdAlumno === {{ $alumno->id }} && isEditModeAlumno"
                     class="bg-white rounded-lg shadow-md p-6"
                     x-data="{
                         lunes: {{ $alumno->lunes ? 'true' : 'false' }},
@@ -442,7 +502,7 @@
                         <div class="mt-6 flex justify-end space-x-3">
                             <button 
                                 type="button"
-                                x-on:click="editIdAlumno = null" 
+                                x-on:click="editIdAlumno = null; isEditModeAlumno = false"
                                 class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition"
                             >
                                 Cancelar
@@ -482,4 +542,26 @@
     <style>
         [x-cloak] { display: none !important; }
     </style>
+    <script>
+        function calendar() {
+            return {
+                currentDate: new Date(),
+                dayNames: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+                blanks: [],
+                dates: [],
+                get currentMonth() { return this.currentDate.getMonth(); },
+                get currentYear() { return this.currentDate.getFullYear(); },
+                init() { this.update(); },
+                prevMonth() { this.currentDate.setMonth(this.currentMonth - 1); this.update(); },
+                nextMonth() { this.currentDate.setMonth(this.currentMonth + 1); this.update(); },
+                update() {
+                    const first = new Date(this.currentYear, this.currentMonth, 1).getDay();
+                    const total = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+                    this.blanks = Array.from({ length: first }, (_, i) => i);
+                    this.dates = Array.from({ length: total }, (_, i) => i + 1);
+                }
+            };
+        }
+    </script>
 </div>
