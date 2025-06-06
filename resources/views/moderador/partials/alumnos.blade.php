@@ -348,9 +348,8 @@
                         <p><strong>Especialidad:</strong> {{ $alumno->especialidad->name ?? 'N/A' }}</p>
                     </div>
 
-                    <div class="mt-4 flex justify-end space-x-3">
+                    <div class="mt-4 flex justify-end">
                         <button type="button" x-on:click="isEditModeAlumno = true" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Editar</button>
-                        <button type="button" x-on:click="editIdAlumno = null" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition">Cerrar</button>
                     </div>
 
                     <div class="mt-6">
@@ -394,21 +393,6 @@
                         </div>
 
                     </div>
-                    @if($alumno->plan)
-                        @php
-                            $totalSubtemas = $alumno->plan->temas->sum(fn($t) => $t->subtemas->count());
-                            $entregadas = $alumno->entregas->count();
-                            $avance = $totalSubtemas ? intval($entregadas * 100 / $totalSubtemas) : 0;
-                        @endphp
-                        <div class="mt-4 bg-gray-50 p-4 rounded">
-                            <h4 class="font-medium">Plan: {{ $alumno->plan->nombre }}</h4>
-                            <p class="text-sm text-gray-700 mb-2">Actividades entregadas: {{ $entregadas }} / {{ $totalSubtemas }}</p>
-                            <div class="w-full h-2 bg-gray-200 rounded">
-                                <div class="h-2 bg-blue-600 rounded" style="width: {{ $avance }}%"></div>
-                            </div>
-                            <button type="button" x-on:click="showPlanId = {{ $alumno->id }}" class="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Ver plan</button>
-                        </div>
-                    @endif
                     @php $maxDate = min($alumno->fecha_termino->format('Y-m-d'), now()->toDateString()); @endphp
                     <div class="mt-4" x-data="editAttendance(
                             @json($attendanceData),
@@ -433,11 +417,29 @@
                             <button type="submit" :disabled="!isValidDate(fecha)" class="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50">Guardar lista</button>
                         </form>
                     </div>
+                    @if($alumno->plan)
+                        @php
+                            $totalSubtemas = $alumno->plan->temas->sum(fn($t) => $t->subtemas->count());
+                            $entregadas = $alumno->entregas->count();
+                            $avance = $totalSubtemas ? intval($entregadas * 100 / $totalSubtemas) : 0;
+                        @endphp
+                        <div class="mt-4 bg-gray-50 p-4 rounded">
+                            <h4 class="font-medium">Plan: {{ $alumno->plan->nombre }}</h4>
+                            <p class="text-sm text-gray-700 mb-2">Actividades entregadas: {{ $entregadas }} / {{ $totalSubtemas }}</p>
+                            <div class="w-full h-2 bg-gray-200 rounded">
+                                <div class="h-2 bg-blue-600 rounded" style="width: {{ $avance }}%"></div>
+                            </div>
+                            <button type="button" x-on:click="showPlanId = {{ $alumno->id }}" class="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Ver plan</button>
+                        </div>
+                    @endif
+                    <div class="mt-4 text-right">
+                        <button type="button" x-on:click="editIdAlumno = null" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition">Cerrar</button>
+                    </div>
                 </div>
 
                 <!-- Edit Form -->
                 <div
-                    x-show="editIdAlumno === {{ $alumno->id }} && isEditModeAlumno"
+                    x-show="editIdAlumno === {{ $alumno->id }} && isEditModeAlumno && showPlanId !== {{ $alumno->id }}"
                     class="bg-white rounded-lg shadow-md p-6"
                     x-data="{
                         lunes: {{ $alumno->lunes ? 'true' : 'false' }},
@@ -705,4 +707,4 @@
             };
         }
     </script>
-</div>
+</div>  
