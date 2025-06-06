@@ -51,6 +51,11 @@
                     {{ session('success') }}
                 </div>
             @endif
+            @if (session('error') && session('tab') === 'alumnos')
+                <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
+                    {{ session('error') }}
+                </div>
+            @endif
             @if ($errors->any() && old('section') == 'alumno')
                 <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
                     <ul class="list-disc list-inside">

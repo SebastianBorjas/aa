@@ -557,6 +557,31 @@ class ModController extends Controller
                         ->with('tab', 'alumnos');
         }
 
+        if ($alumno->fecha_inicio && $fecha->lt($alumno->fecha_inicio)) {
+            return back()->with('error', 'Fecha fuera del rango permitido.')
+                         ->with('tab', 'alumnos');
+        }
+
+        if ($alumno->fecha_termino && $fecha->gt($alumno->fecha_termino)) {
+            return back()->with('error', 'Fecha fuera del rango permitido.')
+                         ->with('tab', 'alumnos');
+        }
+
+        $diaSemana = $fecha->dayOfWeek; // 0 (domingo) - 6 (sabado)
+        $diasPermitidos = [
+            0 => $alumno->domingo,
+            1 => $alumno->lunes,
+            2 => $alumno->martes,
+            3 => $alumno->miercoles,
+            4 => $alumno->jueves,
+            5 => $alumno->viernes,
+            6 => $alumno->sabado,
+        ];
+        if (empty($diasPermitidos[$diaSemana])) {
+            return back()->with('error', 'El alumno no debe asistir este día.')
+                         ->with('tab', 'alumnos');
+        }
+        
         Lista::updateOrCreate(
             [
                 'id_alumno'  => $alumno->id,
