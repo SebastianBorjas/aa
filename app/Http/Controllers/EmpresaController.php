@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Empresa;
 use App\Models\Lista;
+use App\Models\Alumno;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -84,5 +85,60 @@ class EmpresaController extends Controller
         ]);
 
         return back()->with('success', 'Entrega rechazada.');
+    }
+    public function guardarListaAlumno(Request $request, Alumno $alumno)
+    {
+        $empresa = Empresa::where('id_user', Auth::id())->firstOrFail();
+        if ($alumno->id_empresa !== $empresa->id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'fecha' => 'required|date',
+            'estado' => 'required|in:asistencia,falta,justificado',
+        ]);
+
+        $fecha = Carbon::parse($validated['fecha']);
+        if ($fecha->isFuture()) {
+            return back()->with('error', 'No se puede modificar lista a futuro.')
+                         ->with('tab', 'alumnos');
+        }
+
+        if ($alumno->fecha_inicio && $fecha->lt($alumno->fecha_inicio)) {
+            return back()->with('error', 'Fecha fuera del rango permitido.')
+                         ->with('tab', 'alumnos');
+        }
+
+        if ($alumno->fecha_termino && $fecha->gt($alumno->fecha_termino)) {
+            return back()->with('error', 'Fecha fuera del rango permitido.')
+                         ->with('tab', 'alumnos');
+        }
+
+        $diaSemana = $fecha->dayOfWeek;
+        $diasPermitidos = [
+            0 => $alumno->domingo,
+            1 => $alumno->lunes,
+            2 => $alumno->martes,
+            3 => $alumno->miercoles,
+            4 => $alumno->jueves,
+            5 => $alumno->viernes,
+            6 => $alumno->sabado,
+        ];
+        if (empty($diasPermitidos[$diaSemana])) {
+            return back()->with('error', 'El alumno no debe asistir este día.')
+                         ->with('tab', 'alumnos');
+        }
+
+        Lista::updateOrCreate(
+            [
+                'id_alumno'  => $alumno->id,
+                'id_empresa' => $empresa->id,
+                'fecha'      => $fecha->toDateString(),
+            ],
+            ['estado' => $validated['estado']]
+        );
+
+        return back()->with('success', 'Lista actualizada.')
+                     ->with('tab', 'alumnos');
     }
 }
