@@ -9,6 +9,8 @@ use App\Models\Maestro;
 use App\Models\Especialidad;
 use App\Models\User;
 use App\Models\Moderador;
+use App\Models\Lista;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -536,5 +538,35 @@ class ModController extends Controller
 
         $especialidades = Especialidad::where('id_institucion', $institucionId)->get(['id', 'name']);
         return response()->json($especialidades);
+    }
+    public function guardarListaAlumno(Request $request, Alumno $alumno)
+    {
+        $moderador = Moderador::where('id_user', Auth::id())->firstOrFail();
+        if ($alumno->id_plantel !== $moderador->id_plantel) {
+            abort(403, 'No autorizado para editar este alumno.');
+        }
+
+        $validated = $request->validate([
+            'fecha' => 'required|date',
+            'estado' => 'required|in:asistencia,falta,justificado',
+        ]);
+
+        $fecha = Carbon::parse($validated['fecha']);
+        if ($fecha->isFuture()) {
+            return back()->with('error', 'No se puede modificar lista a futuro.')
+                        ->with('tab', 'alumnos');
+        }
+
+        Lista::updateOrCreate(
+            [
+                'id_alumno'  => $alumno->id,
+                'id_empresa' => $alumno->id_empresa,
+                'fecha'      => $fecha->toDateString(),
+            ],
+            [ 'estado' => $validated['estado'] ]
+        );
+
+        return back()->with('success', 'Lista actualizada.')
+                     ->with('tab', 'alumnos');
     }
 }

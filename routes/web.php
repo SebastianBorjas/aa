@@ -61,6 +61,7 @@ Route::middleware(['rol:moderador'])->group(function () {
     Route::post('/moderador/alumnos', [ModController::class, 'registerAlumno'])->name('moderador.registerAlumno');
     Route::put('/moderador/alumnos/{alumno}', [ModController::class, 'updateAlumno'])->name('moderador.updateAlumno');
     Route::delete('/moderador/alumnos/{alumno}', [ModController::class, 'deleteAlumno'])->name('moderador.deleteAlumno');
+    Route::post('/moderador/alumnos/{alumno}/lista', [ModController::class, 'guardarListaAlumno'])->name('moderador.guardarListaAlumno');
     Route::get('/moderador/maestros-por-institucion/{institucion}', [ModController::class, 'getMaestrosPorInstitucion'])->name('moderador.maestrosPorInstitucion');
     Route::get('/moderador/especialidades-por-institucion/{institucion}', [ModController::class, 'getEspecialidadesPorInstitucion'])->name('moderador.especialidadesPorInstitucion');
 });

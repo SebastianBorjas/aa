@@ -386,6 +386,24 @@
                             </style>
                         </div>
                     </div>
+                    <div class="mt-4" x-data="editAttendance(@json($attendanceData))" x-init="fecha='{{ now()->toDateString() }}'; updateEstado()">
+                        <form method="POST" action="{{ route('moderador.guardarListaAlumno', $alumno) }}" class="space-y-3">
+                            @csrf
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Fecha</label>
+                                <input type="date" name="fecha" x-model="fecha" @change="updateEstado()" min="{{ $alumno->fecha_inicio->format('Y-m-d') }}" max="{{ $alumno->fecha_termino->format('Y-m-d') }}" class="mt-1 block w-full rounded-md border-gray-300" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Estado</label>
+                                <select name="estado" x-model="estado" class="mt-1 block w-full rounded-md border-gray-300">
+                                    <option value="asistencia">Asistencia</option>
+                                    <option value="falta">Falta</option>
+                                    <option value="justificado">Justificado</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Guardar lista</button>
+                        </form>
+                    </div>
                     <div class="mt-6 flex justify-end space-x-3">
                         <button type="button" x-on:click="isEditModeAlumno = true" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Editar</button>
                         <button type="button" x-on:click="editIdAlumno = null" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition">Cerrar</button>
@@ -622,6 +640,17 @@
                         const disabled = !inRange || dateObj > today;
                         return { day: day, estado: estado, disabled: disabled };
                     });
+                }
+            };
+        }
+        function editAttendance(records = []) {
+            return {
+                records: records,
+                fecha: '',
+                estado: 'asistencia',
+                updateEstado() {
+                    const rec = this.records.find(r => r.fecha === this.fecha);
+                    this.estado = rec ? rec.estado : 'asistencia';
                 }
             };
         }
