@@ -1,7 +1,16 @@
 @php
     $moderador = App\Models\Moderador::where('id_user', Auth::id())->first();
     $alumnos = App\Models\Alumno::where('id_plantel', $moderador->id_plantel)
-        ->with(['user', 'empresa', 'institucion', 'maestro', 'especialidad', 'listas'])
+        ->with([
+            'user',
+            'empresa',
+            'institucion',
+            'maestro',
+            'especialidad',
+            'listas',
+            'plan.temas.subtemas',
+            'entregas',
+        ])
         ->get();
 @endphp
 
@@ -9,6 +18,7 @@
     isFormOpenAlumno: {{ $errors->any() && old('section') == 'alumno' ? 'true' : 'false' }},
     editIdAlumno: null,
     isEditModeAlumno: false,
+    showPlanId: null,
     institucionId: '{{ old('id_institucion') }}',
     maestros: [],
     especialidades: [],
@@ -384,6 +394,21 @@
                         </div>
 
                     </div>
+                    @if($alumno->plan)
+                        @php
+                            $totalSubtemas = $alumno->plan->temas->sum(fn($t) => $t->subtemas->count());
+                            $entregadas = $alumno->entregas->count();
+                            $avance = $totalSubtemas ? intval($entregadas * 100 / $totalSubtemas) : 0;
+                        @endphp
+                        <div class="mt-4 bg-gray-50 p-4 rounded">
+                            <h4 class="font-medium">Plan: {{ $alumno->plan->nombre }}</h4>
+                            <p class="text-sm text-gray-700 mb-2">Actividades entregadas: {{ $entregadas }} / {{ $totalSubtemas }}</p>
+                            <div class="w-full h-2 bg-gray-200 rounded">
+                                <div class="h-2 bg-blue-600 rounded" style="width: {{ $avance }}%"></div>
+                            </div>
+                            <button type="button" x-on:click="showPlanId = {{ $alumno->id }}" class="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Ver plan</button>
+                        </div>
+                    @endif
                     @php $maxDate = min($alumno->fecha_termino->format('Y-m-d'), now()->toDateString()); @endphp
                     <div class="mt-4" x-data="editAttendance(
                             @json($attendanceData),
@@ -585,6 +610,15 @@
                         @method('DELETE')
                         <input type="hidden" name="section" value="alumno">
                     </form>
+                </div>
+                <div
+                    x-show="showPlanId === {{ $alumno->id }}"
+                    class="bg-white rounded-lg shadow-md p-6 overflow-y-auto max-h-[80vh]"
+                >
+                    @include('moderador.partials.plan_vista', ['alumno' => $alumno])
+                    <div class="mt-4 text-right">
+                        <button type="button" x-on:click="showPlanId = null" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Cerrar</button>
+                    </div>
                 </div>
             @endforeach
         </div>
