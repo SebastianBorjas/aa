@@ -602,18 +602,25 @@
                     const first = new Date(this.currentYear, this.currentMonth, 1).getDay();
                     const total = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
                     this.blanks = Array.from({ length: first }, (_, i) => i);
+
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
                     this.dates = Array.from({ length: total }, (_, i) => {
                         const day = i + 1;
                         const dateObj = new Date(this.currentYear, this.currentMonth, day);
+                        dateObj.setHours(0, 0, 0, 0);
                         const dateStr = `${this.currentYear}-${String(this.currentMonth + 1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
                         const rec = this.records.find(r => r.fecha === dateStr);
                         let estado = rec ? rec.estado : null;
                         const inRange = (!this.startDate || dateObj >= this.startDate) && (!this.endDate || dateObj <= this.endDate);
                         const shouldAttend = inRange && this.activeDays.includes(dateObj.getDay());
-                        if (shouldAttend && !rec) {
+                        const isPastOrToday = dateObj <= today;
+                        if (shouldAttend && !rec && isPastOrToday) {
                             estado = 'no_lista';
                         }
-                        return { day: day, estado: estado, disabled: !inRange };
+                        const disabled = !inRange || dateObj > today;
+                        return { day: day, estado: estado, disabled: disabled };
                     });
                 }
             };
