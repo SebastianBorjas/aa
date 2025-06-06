@@ -309,6 +309,14 @@
                         'fecha' => $l->fecha->format('Y-m-d'),
                         'estado' => $l->estado,
                     ]);
+                    $diasActivos = [];
+                    if ($alumno->domingo) $diasActivos[] = 0;
+                    if ($alumno->lunes) $diasActivos[] = 1;
+                    if ($alumno->martes) $diasActivos[] = 2;
+                    if ($alumno->miercoles) $diasActivos[] = 3;
+                    if ($alumno->jueves) $diasActivos[] = 4;
+                    if ($alumno->viernes) $diasActivos[] = 5;
+                    if ($alumno->sabado) $diasActivos[] = 6;
                 @endphp
                 <div
                     x-show="editIdAlumno === {{ $alumno->id }} && !isEditModeAlumno"
@@ -327,7 +335,14 @@
 
                     <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Static Calendar -->
-                        <div class="bg-gray-100 p-4 rounded" x-data='calendar(@json($attendanceData))' x-init="init()">
+                        <div class="bg-gray-100 p-4 rounded"
+                             x-data='calendar(
+                                @json($attendanceData),
+                                "{{ $alumno->fecha_inicio->format('Y-m-d') }}",
+                                "{{ $alumno->fecha_termino->format('Y-m-d') }}",
+                                @json($diasActivos)
+                             )'
+                             x-init="init()">
                             <div class="flex items-center justify-between mb-2">
                                 <button type="button" @click="prevMonth" class="text-sm px-2 py-1 bg-gray-200 rounded">&#8249;</button>
                                 <div class="text-sm font-semibold" x-text="monthNames[currentMonth] + ' ' + currentYear"></div>
@@ -343,12 +358,13 @@
                                     <div></div>
                                 </template>
                                 <template x-for="date in dates" :key="date.day">
-                                    <div class="py-1 flex justify-center">
+                                    <div class="py-1 flex justify-center" :class="{ 'opacity-50': date.disabled }">
                                         <div class="w-6 h-6 flex items-center justify-center rounded-full"
                                              :class="{
                                                  'bg-green-600 text-white': date.estado === 'asistencia',
                                                  'bg-red-600 text-white': date.estado === 'falta',
-                                                 'bg-blue-600 text-white': date.estado === 'justificado'
+                                                 'bg-blue-600 text-white': date.estado === 'justificado',
+                                                 'bg-gray-400 text-white': date.estado === 'no_lista'
                                              }">
                                             <span x-text="date.day"></span>
                                         </div>
@@ -560,7 +576,7 @@
         [x-cloak] { display: none !important; }
     </style>
     <script>
-        function calendar(records = []) {
+        function calendar(records = [], start = null, end = null, activeDays = []) {
             return {
                 currentDate: new Date(),
                 dayNames: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
@@ -568,6 +584,9 @@
                 blanks: [],
                 dates: [],
                 records: records,
+                startDate: start ? new Date(start) : null,
+                endDate: end ? new Date(end) : null,
+                activeDays: activeDays,
                 get currentMonth() { return this.currentDate.getMonth(); },
                 get currentYear() { return this.currentDate.getFullYear(); },
                 init() { this.update(); },
@@ -585,9 +604,16 @@
                     this.blanks = Array.from({ length: first }, (_, i) => i);
                     this.dates = Array.from({ length: total }, (_, i) => {
                         const day = i + 1;
+                        const dateObj = new Date(this.currentYear, this.currentMonth, day);
                         const dateStr = `${this.currentYear}-${String(this.currentMonth + 1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
                         const rec = this.records.find(r => r.fecha === dateStr);
-                        return { day: day, estado: rec ? rec.estado : null };
+                        let estado = rec ? rec.estado : null;
+                        const inRange = (!this.startDate || dateObj >= this.startDate) && (!this.endDate || dateObj <= this.endDate);
+                        const shouldAttend = inRange && this.activeDays.includes(dateObj.getDay());
+                        if (shouldAttend && !rec) {
+                            estado = 'no_lista';
+                        }
+                        return { day: day, estado: estado, disabled: !inRange };
                     });
                 }
             };
