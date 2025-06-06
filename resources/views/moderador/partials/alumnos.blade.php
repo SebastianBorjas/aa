@@ -1,6 +1,8 @@
 @php
     $moderador = App\Models\Moderador::where('id_user', Auth::id())->first();
-    $alumnos = App\Models\Alumno::where('id_plantel', $moderador->id_plantel)->with(['user', 'empresa', 'institucion', 'maestro', 'especialidad'])->get();
+    $alumnos = App\Models\Alumno::where('id_plantel', $moderador->id_plantel)
+        ->with(['user', 'empresa', 'institucion', 'maestro', 'especialidad', 'listas'])
+        ->get();
 @endphp
 
 <div class="max-w-7xl mx-auto p-4" x-data="{
@@ -302,6 +304,12 @@
             <!-- Detail and Edit -->
             @foreach ($alumnos as $alumno)
                 <!-- View Details -->
+                @php
+                    $attendanceData = $alumno->listas->map(fn($l) => [
+                        'fecha' => $l->fecha->format('Y-m-d'),
+                        'estado' => $l->estado,
+                    ]);
+                @endphp
                 <div
                     x-show="editIdAlumno === {{ $alumno->id }} && !isEditModeAlumno"
                     class="bg-white rounded-lg shadow-md p-6"
@@ -319,7 +327,7 @@
 
                     <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Static Calendar -->
-                        <div class="bg-gray-100 p-4 rounded" x-data="calendar()" x-init="init()">
+                        <div class="bg-gray-100 p-4 rounded" x-data='calendar(@json($attendanceData))' x-init="init()">
                             <div class="flex items-center justify-between mb-2">
                                 <button type="button" @click="prevMonth" class="text-sm px-2 py-1 bg-gray-200 rounded">&#8249;</button>
                                 <div class="text-sm font-semibold" x-text="monthNames[currentMonth] + ' ' + currentYear"></div>
@@ -334,8 +342,17 @@
                                 <template x-for="blank in blanks" :key="'b' + blank">
                                     <div></div>
                                 </template>
-                                <template x-for="date in dates" :key="date">
-                                    <div class="py-1" x-text="date"></div>
+                                <template x-for="date in dates" :key="date.day">
+                                    <div class="py-1 flex justify-center">
+                                        <div class="w-6 h-6 flex items-center justify-center rounded-full"
+                                             :class="{
+                                                 'bg-green-600 text-white': date.estado === 'asistencia',
+                                                 'bg-red-600 text-white': date.estado === 'falta',
+                                                 'bg-blue-600 text-white': date.estado === 'justificado'
+                                             }">
+                                            <span x-text="date.day"></span>
+                                        </div>
+                                    </div>
                                 </template>
                             </div>
                         </div>
@@ -543,23 +560,35 @@
         [x-cloak] { display: none !important; }
     </style>
     <script>
-        function calendar() {
+        function calendar(records = []) {
             return {
                 currentDate: new Date(),
                 dayNames: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
                 monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
                 blanks: [],
                 dates: [],
+                records: records,
                 get currentMonth() { return this.currentDate.getMonth(); },
                 get currentYear() { return this.currentDate.getFullYear(); },
                 init() { this.update(); },
-                prevMonth() { this.currentDate.setMonth(this.currentMonth - 1); this.update(); },
-                nextMonth() { this.currentDate.setMonth(this.currentMonth + 1); this.update(); },
+                prevMonth() {
+                    this.currentDate = new Date(this.currentYear, this.currentMonth - 1, 1);
+                    this.update();
+                },
+                nextMonth() {
+                    this.currentDate = new Date(this.currentYear, this.currentMonth + 1, 1);
+                    this.update();
+                },
                 update() {
                     const first = new Date(this.currentYear, this.currentMonth, 1).getDay();
                     const total = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
                     this.blanks = Array.from({ length: first }, (_, i) => i);
-                    this.dates = Array.from({ length: total }, (_, i) => i + 1);
+                    this.dates = Array.from({ length: total }, (_, i) => {
+                        const day = i + 1;
+                        const dateStr = `${this.currentYear}-${String(this.currentMonth + 1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                        const rec = this.records.find(r => r.fecha === dateStr);
+                        return { day: day, estado: rec ? rec.estado : null };
+                    });
                 }
             };
         }

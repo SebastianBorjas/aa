@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Lista;
 class Alumno extends Model
 {
     public $timestamps = true;
@@ -82,5 +83,9 @@ class Alumno extends Model
     public function entregas(): HasMany
     {
         return $this->hasMany(Entrega::class, 'id_alumno');
+    }
+    public function listas(): HasMany
+    {
+        return $this->hasMany(Lista::class, 'id_alumno');
     }
 }
