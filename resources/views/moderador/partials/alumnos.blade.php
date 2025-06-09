@@ -12,6 +12,9 @@
             'entregas',
         ])
         ->get();
+
+    $empresasFiltro = App\Models\Empresa::where('id_plantel', $moderador->id_plantel)->get();
+    $institucionesFiltro = App\Models\Institucion::where('id_plantel', $moderador->id_plantel)->get();
 @endphp
 
 <div class="max-w-7xl mx-auto p-4" x-data="{
@@ -22,6 +25,8 @@
     institucionId: '{{ old('id_institucion') }}',
     maestros: [],
     especialidades: [],
+    selectedEmpresa: '',
+    selectedInstitucion: '',
     lunes: {{ old('lunes', 0) ? 'true' : 'false' }},
     martes: {{ old('martes', 0) ? 'true' : 'false' }},
     miercoles: {{ old('miercoles', 0) ? 'true' : 'false' }},
@@ -76,33 +81,57 @@
                 </div>
             @endif
 
+            <!-- Filters -->
+            <div class="mb-4 flex flex-col md:flex-row md:space-x-4">
+                <div class="flex-1">
+                    <label for="empresa_filter" class="block text-sm font-medium text-gray-700">Filtrar por Empresa</label>
+                    <select id="empresa_filter" x-model="selectedEmpresa" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                        <option value="">Todas</option>
+                        @foreach ($empresasFiltro as $empresa)
+                            <option value="{{ $empresa->id }}">{{ $empresa->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex-1 mt-4 md:mt-0">
+                    <label for="institucion_filter" class="block text-sm font-medium text-gray-700">Filtrar por Institución</label>
+                    <select id="institucion_filter" x-model="selectedInstitucion" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                        <option value="">Todas</option>
+                        @foreach ($institucionesFiltro as $institucion)
+                            <option value="{{ $institucion->id }}">{{ $institucion->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
             <!-- Alumnos Table -->
             @if ($alumnos->isEmpty())
                 <p class="text-gray-600">No hay alumnos registrados.</p>
             @else
                 <div class="overflow-x-auto max-w-full">
-                    <table class="min-w-full divide-y divide-gray-300">
-                        <thead class="bg-gray-700 text-white">
+                    <table class="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg shadow-sm">
+                        <thead class="bg-gray-800 text-white">
                             <tr>
-                                <th class="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">Nombre</th>
-                                <th class="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">Correo</th>
-                                <th class="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">Empresa</th>
-                                <th class="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">Institución</th>
-                                <th class="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">Especialidad</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Nombre</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Correo</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Empresa</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Institución</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Especialidad</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-300">
+                        <tbody class="bg-white divide-y divide-gray-200">
                             @foreach ($alumnos as $alumno)
                                 <tr
                                    x-on:click="editIdAlumno = editIdAlumno === {{ $alumno->id }} ? null : {{ $alumno->id }}; isFormOpenAlumno = false; isEditModeAlumno = false; showPlanId = null"
-                                    class="cursor-pointer hover:bg-gray-200 transition"
+                                    x-show="(selectedEmpresa === '' || selectedEmpresa == {{ $alumno->id_empresa }}) &&
+                                             (selectedInstitucion === '' || selectedInstitucion == {{ $alumno->id_institucion }})"
+                                    class="cursor-pointer hover:bg-gray-100 transition"
                                     :class="{ 'bg-gray-200': editIdAlumno === {{ $alumno->id }} }"
                                 >
-                                    <td class="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $alumno->name }}</td>
-                                    <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">{{ $alumno->user->email }}</td>
-                                    <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">{{ $alumno->empresa->name ?? 'N/A' }}</td>
-                                    <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">{{ $alumno->institucion->name ?? 'N/A' }}</td>
-                                    <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">{{ $alumno->especialidad->name ?? 'N/A' }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{{ $alumno->name }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{{ $alumno->user->email }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{{ $alumno->empresa->name ?? 'N/A' }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{{ $alumno->institucion->name ?? 'N/A' }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{{ $alumno->especialidad->name ?? 'N/A' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
