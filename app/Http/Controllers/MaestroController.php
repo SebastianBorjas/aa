@@ -148,21 +148,26 @@ class MaestroController extends Controller
     public function subtemaAgregarArchivo(Request $request, $id)
     {
         $request->validate([
-            'archivo' => 'required|file|max:2048', // 2MB
+            'archivos.*' => 'file|max:2048', // 2MB
         ]);
 
         $subtema = Subtema::findOrFail($id);
 
-        // Revisar cuantos archivos hay ya
         $rutas = $subtema->rutas ?: [];
-        if (count($rutas) >= 4) {
+        $files = $request->file('archivos', []);
+        if (!is_array($files)) {
+            $files = $files ? [$files] : [];
+        }
+
+        if (count($rutas) >= 4 || count($rutas) + count($files) > 4) {
             return back()->with('error', 'Solo se permiten máximo 4 archivos por subtema');
         }
 
-        // Guardar archivo
-        $file = $request->file('archivo');
-        $path = $file->store('subtemas', 'public');
-        $rutas[] = $path;
+        
+        foreach ($files as $file) {
+            $rutas[] = $file->store('subtemas', 'public');
+        }
+
         $subtema->rutas = $rutas;
         $subtema->save();
 

@@ -73,7 +73,7 @@
             {{-- Temas --}}
             <div class="flex flex-col gap-8">
                 @foreach($plan->temas as $tema)
-                <div class="bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-blue-600 shadow-lg rounded-xl p-5 flex flex-col gap-4 group relative">
+                <div class="border rounded-lg p-4 bg-gray-50 flex flex-col gap-4">
                     <div class="flex items-center justify-between gap-2 flex-wrap">
                         <button type="button"
                             @click="temaOpenId === {{ $tema->id }} ? temaOpenId = null : temaOpenId = {{ $tema->id }}"
@@ -114,7 +114,7 @@
 
                         {{-- SUBTEMAS --}}
                         @foreach($tema->subtemas as $subtema)
-                        <div class="relative flex flex-col gap-2 w-full pl-6 border-l-4 border-blue-300 bg-white/90 rounded-lg shadow-md p-4 ml-1">
+                        <div class="mt-3 pl-4 border-l-4 border-blue-300">
                             {{-- Título y eliminar --}}
                             <div class="flex items-center justify-between mb-1">
                                 <div class="font-bold text-blue-900 text-base">Subtema</div>
@@ -161,14 +161,24 @@
                                     @endif
                                 </div>
                                 @if(count($subtema->rutas ?? []) < 4)
-                                <form method="POST" action="{{ route('maestro.subtemas.addfile', $subtema->id) }}" enctype="multipart/form-data" class="flex flex-col sm:flex-row items-center gap-2 mt-1">
-                                    @csrf
-                                    <input type="file" name="archivo" accept="*" class="block border px-2 py-1 rounded w-full sm:w-auto" required>
-                                    <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded shadow font-bold hover:bg-green-700 transition">Subir archivo</button>
-                                </form>
-                                <div class="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center mt-1 gap-1">
-                                    <span class="text-xs text-gray-500">Solo puedes subir un archivo a la vez. Para subir más, repite la operación.</span>
-                                    <span class="text-xs text-gray-500">Máx. 4 archivos por subtema, 2MB cada uno.</span>
+                                <div x-data="fileUploader()" class="mt-1">
+                                    <button type="button" @click="open = !open" class="px-3 py-1 bg-green-600 text-white rounded shadow hover:bg-green-700">Subir archivo</button>
+                                    <div x-show="open" x-cloak class="mt-2 border rounded p-3 bg-white">
+                                        <form method="POST" action="{{ route('maestro.subtemas.addfile', $subtema->id) }}" enctype="multipart/form-data" class="space-y-2">
+                                            @csrf
+                                            <div x-ref="inputs"></div>
+                                            <input type="file" multiple class="hidden" x-ref="fileInput" @change="handleFiles">
+                                            <template x-for="(file, index) in files" :key="file.id">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="truncate w-full" x-text="file.name"></span>
+                                                    <button type="button" @click="removeFile(index)" class="text-red-600 text-sm">Eliminar</button>
+                                                </div>
+                                            </template>
+                                            <button type="button" @click="openPicker" x-show="files.length < 4" class="px-2 py-1 bg-gray-200 rounded text-sm">Agregar archivos</button>
+                                            <p class="text-xs text-gray-500">Máx. 4 archivos, 2MB cada uno.</p>
+                                            <button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Subir</button>
+                                        </form>
+                                    </div>
                                 </div>
                                 @endif
                             </div>
@@ -229,3 +239,38 @@
     </div>
 </div>
 
+@push('vite')
+<script>
+function fileUploader() {
+    return {
+        open: false,
+        files: [],
+        openPicker() {
+            this.$refs.fileInput.click();
+        },
+        handleFiles(e) {
+            for (const file of Array.from(e.target.files)) {
+                if (this.files.length >= 4) break;
+                const id = Date.now() + Math.random();
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.name = 'archivos[]';
+                input.classList.add('hidden');
+                input.files = dt.files;
+                input.dataset.id = id;
+                this.$refs.inputs.appendChild(input);
+                this.files.push({id, name: file.name});
+            }
+            e.target.value = '';
+        },
+        removeFile(index) {
+            const removed = this.files.splice(index, 1)[0];
+            const el = this.$refs.inputs.querySelector('input[data-id="'+removed.id+'"]');
+            if (el) el.remove();
+        }
+    }
+}
+</script>
+@endpush
