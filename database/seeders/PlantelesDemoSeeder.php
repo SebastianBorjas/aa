@@ -31,12 +31,12 @@ class PlantelesDemoSeeder extends Seeder
         // Fechas posibles de inicio
         $fechasInicio = [
             '2025-06-01',
-            '2025-07-01',
-            '2025-08-01',
-            '2025-09-01',
-            '2025-10-01',
-            '2025-11-01',
-            '2025-12-01',
+            '2025-05-21',
+            '2025-06-01',
+            '2025-05-11',
+            '2025-06-01',
+            '2025-05-16',
+            '2025-05-01',
         ];
 
         // Arreglo de días posibles para los alumnos
