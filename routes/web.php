@@ -95,6 +95,7 @@ Route::middleware(['rol:maestro'])->group(function () {
 // Panel alumno protegido
 Route::middleware(['rol:alumno'])->group(function () {
     Route::get('/alumno/inicio', [AlumnoController::class, 'inicio'])->name('alumno.inicio');
+    Route::get('/alumno/temas/{tema}', [AlumnoController::class, 'verTema'])->name('alumno.tema');
     Route::get('/alumno/subtemas/{subtema}', [AlumnoController::class, 'verSubtema'])->name('alumno.subtema');
     Route::post('/alumno/subtemas/{subtema}/entregar', [AlumnoController::class, 'entregarTarea'])->name('alumno.entregar_tarea');
 });

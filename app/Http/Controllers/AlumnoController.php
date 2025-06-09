@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Entrega;
+use App\Models\Tema;
 use App\Models\Subtema;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +22,14 @@ class AlumnoController extends Controller
         }
 
         return view('alumno.inicio', compact('tab', 'alumno'));
+    }
+    public function verTema(Tema $tema)
+    {
+        $alumno = Alumno::where('id_user', Auth::id())->firstOrFail();
+
+        $tema->load(['plan', 'subtemas']);
+
+        return view('alumno.tema', compact('alumno', 'tema'));
     }
 
     public function verSubtema(Subtema $subtema)
