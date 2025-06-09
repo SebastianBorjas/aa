@@ -121,14 +121,33 @@ class MaestroController extends Controller
             'id_tema'     => 'required|integer|exists:temas,id',
             'descripcion' => 'nullable|string',
             'id'          => 'nullable|integer|exists:subtemas,id',
+            'archivos.*'  => 'file|max:2048',
         ]);
 
         if ($request->filled('id')) {
             $subtema = Subtema::findOrFail($request->id);
             $subtema->update($request->only(['nombre', 'descripcion']));
         } else {
-            Subtema::create($request->only(['id_tema', 'nombre', 'descripcion']));
+            $subtema = Subtema::create($request->only(['id_tema', 'nombre', 'descripcion']));
         }
+
+        $files = $request->file('archivos', []);
+        if (!is_array($files)) {
+            $files = $files ? [$files] : [];
+        }
+
+        if (!empty($files)) {
+            $rutas = $subtema->rutas ?: [];
+            if (count($rutas) >= 4 || count($rutas) + count($files) > 4) {
+                return back()->with('error', 'Solo se permiten máximo 4 archivos por subtema');
+            }
+            foreach ($files as $file) {
+                $rutas[] = $file->store('subtemas', 'public');
+            }
+            $subtema->rutas = $rutas;
+            $subtema->save();
+        }
+
         return redirect()->back()->with('success', 'Subtema guardado');
     }
 
