@@ -72,16 +72,27 @@
                                 $estado = $registro->estado ?? 'asistencia';
                                 $registrado = !is_null($registro);
                             @endphp
-                            <tr class="{{ $registrado ? 'bg-blue-50 border border-blue-800' : 'bg-green-50 border border-green-600' }}">
-                                <td class="px-3 py-2">{{ $alumno->name }}</td>
-                                <td class="px-3 py-2 text-center">
-                                    <input type="radio" name="estado[{{ $alumno->id }}]" value="asistencia" {{ $estado == 'asistencia' ? 'checked' : '' }}>
+                            <tr class="{{ $registrado ? 'bg-blue-200 border border-blue-600 text-blue-900' : 'bg-green-200 border border-green-600 text-green-900' }}">
+                                <td class="px-3 py-2 flex items-center gap-2">
+                                    @if($registrado)
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    @else
+                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <circle cx="12" cy="12" r="9" stroke-width="2" />
+                                        </svg>
+                                    @endif
+                                    <span>{{ $alumno->name }}</span>
                                 </td>
                                 <td class="px-3 py-2 text-center">
-                                    <input type="radio" name="estado[{{ $alumno->id }}]" value="falta" {{ $estado == 'falta' ? 'checked' : '' }}>
+                                    <input type="radio" class="form-radio h-4 w-4 {{ $registrado ? 'text-blue-600' : 'text-green-600' }}" name="estado[{{ $alumno->id }}]" value="asistencia" {{ $estado == 'asistencia' ? 'checked' : '' }}>
                                 </td>
                                 <td class="px-3 py-2 text-center">
-                                    <input type="radio" name="estado[{{ $alumno->id }}]" value="justificado" {{ $estado == 'justificado' ? 'checked' : '' }}>
+                                    <input type="radio" class="form-radio h-4 w-4 {{ $registrado ? 'text-blue-600' : 'text-green-600' }}" name="estado[{{ $alumno->id }}]" value="falta" {{ $estado == 'falta' ? 'checked' : '' }}>
+                                </td>
+                                <td class="px-3 py-2 text-center">
+                                    <input type="radio" class="form-radio h-4 w-4 {{ $registrado ? 'text-blue-600' : 'text-green-600' }}" name="estado[{{ $alumno->id }}]" value="justificado" {{ $estado == 'justificado' ? 'checked' : '' }}>
                                 </td>
                             </tr>
                         @endforeach
