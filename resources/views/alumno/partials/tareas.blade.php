@@ -95,7 +95,7 @@
                                 @endif
                             </div>
                             @if($entrega->estado === 'rechazado')
-                                <div x-data="{ open: false, inputs: [1], add() { if(this.inputs.length < 4) this.inputs.push(Date.now()) }, remove(i){ this.inputs.splice(i,1) } }" class="mt-2">
+                                <div x-data="fileUploader()" class="mt-2">
                                     <button type="button" @click="open = !open" class="px-3 py-1 bg-green-600 text-white rounded shadow hover:bg-green-700">Reenviar tarea</button>
                                     <div x-show="open" x-cloak class="mt-2 border rounded p-3 bg-white">
                                         <form method="POST" action="{{ route('alumno.entregar_tarea', $subtema->id) }}" enctype="multipart/form-data" class="space-y-2">
@@ -119,13 +119,15 @@
                                                     @endforeach
                                                 </ul>
                                             @endif
-                                            <template x-for="(input, index) in inputs" :key="input">
+                                            <div x-ref="inputs"></div>
+                                            <input type="file" multiple class="hidden" x-ref="fileInput" @change="handleFiles">
+                                            <template x-for="(file, index) in files" :key="file.id">
                                                 <div class="flex items-center gap-2">
-                                                    <input type="file" name="archivos[]" class="w-full border rounded p-2">
-                                                    <button type="button" @click="remove(index)" class="text-red-600 text-sm">Eliminar</button>
+                                                    <span class="truncate w-full" x-text="file.name"></span>
+                                                    <button type="button" @click="removeFile(index)" class="text-red-600 text-sm">Eliminar</button>
                                                 </div>
                                             </template>
-                                            <button type="button" @click="add" x-show="inputs.length < 4" class="px-2 py-1 bg-gray-200 rounded text-sm">Agregar archivo</button>
+                                            <button type="button" @click="openPicker" x-show="files.length < 4" class="px-2 py-1 bg-gray-200 rounded text-sm">Agregar archivos</button>
                                             <p class="text-xs text-gray-500">Máx. 4 archivos, 2MB cada uno.</p>
                                             <button type="submit" class="px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Enviar</button>
                                         </form>
@@ -133,19 +135,21 @@
                                 </div>
                             @endif
                         @else
-                            <div x-data="{ open: false, inputs: [1], add() { if(this.inputs.length < 4) this.inputs.push(Date.now()) }, remove(i){ this.inputs.splice(i,1) } }" class="mt-2">
+                            <div x-data="fileUploader()" class="mt-2">
                                 <button type="button" @click="open = !open" class="px-3 py-1 bg-green-600 text-white rounded shadow hover:bg-green-700">Entregar tarea</button>
                                 <div x-show="open" x-cloak class="mt-2 border rounded p-3 bg-white">
                                     <form method="POST" action="{{ route('alumno.entregar_tarea', $subtema->id) }}" enctype="multipart/form-data" class="space-y-2">
                                         @csrf
                                         <textarea name="contenido" rows="3" class="w-full border rounded p-2" placeholder="Contenido" required></textarea>
-                                        <template x-for="(input, index) in inputs" :key="input">
+                                        <div x-ref="inputs"></div>
+                                        <input type="file" multiple class="hidden" x-ref="fileInput" @change="handleFiles">
+                                        <template x-for="(file, index) in files" :key="file.id">
                                             <div class="flex items-center gap-2">
-                                                <input type="file" name="archivos[]" class="w-full border rounded p-2">
-                                                <button type="button" @click="remove(index)" class="text-red-600 text-sm">Eliminar</button>
+                                                <span class="truncate w-full" x-text="file.name"></span>
+                                                <button type="button" @click="removeFile(index)" class="text-red-600 text-sm">Eliminar</button>
                                             </div>
                                         </template>
-                                        <button type="button" @click="add" x-show="inputs.length < 4" class="px-2 py-1 bg-gray-200 rounded text-sm">Agregar archivo</button>
+                                        <button type="button" @click="openPicker" x-show="files.length < 4" class="px-2 py-1 bg-gray-200 rounded text-sm">Agregar archivos</button>
                                         <p class="text-xs text-gray-500">Máx. 4 archivos, 2MB cada uno.</p>
                                         <button type="submit" class="px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Enviar</button>
                                     </form>
@@ -158,3 +162,39 @@
         @endforeach
     </div>
 @endif
+
+@push('vite')
+<script>
+function fileUploader() {
+    return {
+        open: false,
+        files: [],
+        openPicker() {
+            this.$refs.fileInput.click();
+        },
+        handleFiles(e) {
+            for (const file of Array.from(e.target.files)) {
+                if (this.files.length >= 4) break;
+                const id = Date.now() + Math.random();
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.name = 'archivos[]';
+                input.classList.add('hidden');
+                input.files = dt.files;
+                input.dataset.id = id;
+                this.$refs.inputs.appendChild(input);
+                this.files.push({id, name: file.name});
+            }
+            e.target.value = '';
+        },
+        removeFile(index) {
+            const removed = this.files.splice(index, 1)[0];
+            const el = this.$refs.inputs.querySelector('input[data-id="'+removed.id+'"]');
+            if (el) el.remove();
+        }
+    }
+}
+</script>
+@endpush
