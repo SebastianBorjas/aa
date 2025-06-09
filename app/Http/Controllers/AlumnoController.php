@@ -22,6 +22,18 @@ class AlumnoController extends Controller
 
         return view('alumno.inicio', compact('tab', 'alumno'));
     }
+
+    public function verSubtema(Subtema $subtema)
+    {
+        $alumno = Alumno::where('id_user', Auth::id())->firstOrFail();
+
+        $subtema->load(['tema.plan', 'entregas' => function ($q) use ($alumno) {
+            $q->where('id_alumno', $alumno->id);
+        }]);
+
+        return view('alumno.subtema', compact('alumno', 'subtema'));
+    }
+    
     public function entregarTarea(Request $request, $subtemaId)
     {
         $alumno = Alumno::where('id_user', Auth::id())->firstOrFail();
