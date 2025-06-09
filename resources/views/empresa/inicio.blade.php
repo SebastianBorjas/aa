@@ -8,17 +8,10 @@
 @section('title', 'Panel empresa')
 
 @section('main')
-<div x-data="{ tab: '{{ request('tab', 'alumnos') }}', sidebarOpen: false }"
-     x-init="
-        $watch('tab', value => {
-            const url = new URL(window.location);
-            url.searchParams.set('tab', value);
-            if (value !== 'lista') {
-                url.searchParams.delete('fecha');
-            }
-            history.replaceState({}, '', url);
-        });
-     "
+@php
+    $tab = session('tab', request('tab', 'alumnos'));
+@endphp
+<div x-data="{ sidebarOpen: false }"
      class="flex flex-col md:flex-row flex-grow relative md:pl-64">
   <!-- Botón Hamburguesa (Mobile) -->
   <button x-show="!sidebarOpen" @click="sidebarOpen = true" class="md:hidden fixed top-4 left-4 z-50 p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
@@ -30,15 +23,18 @@
   <!-- Sidebar (Desktop) -->
   <aside class="hidden md:block md:fixed md:left-0 md:top-16 md:h-[calc(100vh_-_4rem)] w-64 bg-[#202c54] text-white p-4 space-y-4 overflow-y-auto">
     <nav class="flex flex-col gap-2">
-      <button @click="tab = 'alumnos'" :class="{ 'bg-[#2e3a68] text-white': tab === 'alumnos' }" class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+      <a href="{{ route('empresa.inicio', ['tab' => 'alumnos']) }}"
+         class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium {{ $tab === 'alumnos' ? 'bg-[#2e3a68] text-white' : '' }}">
         Alumnos
-      </button>
-      <button @click="tab = 'lista'" :class="{ 'bg-[#2e3a68] text-white': tab === 'lista' }" class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+      </a>
+      <a href="{{ route('empresa.inicio', ['tab' => 'lista']) }}"
+         class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium {{ $tab === 'lista' ? 'bg-[#2e3a68] text-white' : '' }}">
         Lista
-      </button>
-      <button @click="tab = 'revisar'" :class="{ 'bg-[#2e3a68] text-white': tab === 'revisar' }" class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+      </a>
+      <a href="{{ route('empresa.inicio', ['tab' => 'revisar']) }}"
+         class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium {{ $tab === 'revisar' ? 'bg-[#2e3a68] text-white' : '' }}">
         Revisar
-      </button>
+      </a>
     </nav>
     <form method="POST" action="{{ route('logout') }}" class="pt-4 border-t border-white/20">
       @csrf
@@ -66,15 +62,18 @@
         </svg>
       </button>
       <nav class="flex flex-col gap-2">
-        <button @click="tab = 'alumnos'; sidebarOpen = false" :class="{ 'bg-[#2e3a68] text-white': tab === 'alumnos' }" class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+        <a href="{{ route('empresa.inicio', ['tab' => 'alumnos']) }}" @click="sidebarOpen = false"
+           class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium {{ $tab === 'alumnos' ? 'bg-[#2e3a68] text-white' : '' }}">
           Alumnos
-        </button>
-        <button @click="tab = 'lista'; sidebarOpen = false" :class="{ 'bg-[#2e3a68] text-white': tab === 'lista' }" class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+        </a>
+        <a href="{{ route('empresa.inicio', ['tab' => 'lista']) }}" @click="sidebarOpen = false"
+           class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium {{ $tab === 'lista' ? 'bg-[#2e3a68] text-white' : '' }}">
           Lista
-        </button>
-        <button @click="tab = 'revisar'; sidebarOpen = false" :class="{ 'bg-[#2e3a68] text-white': tab === 'revisar' }" class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+        </a>
+        <a href="{{ route('empresa.inicio', ['tab' => 'revisar']) }}" @click="sidebarOpen = false"
+           class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium {{ $tab === 'revisar' ? 'bg-[#2e3a68] text-white' : '' }}">
           Revisar
-        </button>
+        </a>
       </nav>
       <form method="POST" action="{{ route('logout') }}" class="pt-4 border-t border-white/20 mt-auto">
         @csrf
@@ -87,21 +86,13 @@
 
   <!-- Contenido principal -->
   <main class="flex-grow bg-white p-6">
-    <template x-if="tab === 'alumnos'">
-      <div x-cloak>
-        @include('empresa.partials.alumnos')
-      </div>
-    </template>
-    <template x-if="tab === 'lista'">
-      <div x-cloak>
-        @include('empresa.partials.lista')
-      </div>
-    </template>
-    <template x-if="tab === 'revisar'">
-      <div x-cloak>
-        @include('empresa.partials.revisar')
-      </div>
-    </template>
+    @if ($tab === 'alumnos')
+      @include('empresa.partials.alumnos')
+    @elseif ($tab === 'lista')
+      @include('empresa.partials.lista')
+    @elseif ($tab === 'revisar')
+      @include('empresa.partials.revisar')
+    @endif
   </main>
 </div>
 
