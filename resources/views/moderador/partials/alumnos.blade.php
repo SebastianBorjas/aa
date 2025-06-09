@@ -94,7 +94,7 @@
                         <tbody class="bg-white divide-y divide-gray-300">
                             @foreach ($alumnos as $alumno)
                                 <tr
-                                    x-on:click="editIdAlumno = editIdAlumno === {{ $alumno->id }} ? null : {{ $alumno->id }}; isFormOpenAlumno = false; isEditModeAlumno = false"
+                                   x-on:click="editIdAlumno = editIdAlumno === {{ $alumno->id }} ? null : {{ $alumno->id }}; isFormOpenAlumno = false; isEditModeAlumno = false; showPlanId = null"
                                     class="cursor-pointer hover:bg-gray-200 transition"
                                     :class="{ 'bg-gray-200': editIdAlumno === {{ $alumno->id }} }"
                                 >
@@ -334,7 +334,8 @@
                     if ($alumno->sabado) $diasActivos[] = 6;
                 @endphp
                 <div
-                    x-show="editIdAlumno === {{ $alumno->id }} && !isEditModeAlumno"
+                    x-show="editIdAlumno === {{ $alumno->id }} && !isEditModeAlumno && showPlanId !== {{ $alumno->id }}"
+                    x-cloak
                     class="bg-white rounded-lg shadow-md p-6"
                 >
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Información del Alumno</h3>
@@ -440,6 +441,7 @@
                 <!-- Edit Form -->
                 <div
                     x-show="editIdAlumno === {{ $alumno->id }} && isEditModeAlumno && showPlanId !== {{ $alumno->id }}"
+                    x-cloak
                     class="bg-white rounded-lg shadow-md p-6"
                     x-data="{
                         lunes: {{ $alumno->lunes ? 'true' : 'false' }},
@@ -615,6 +617,7 @@
                 </div>
                 <div
                     x-show="showPlanId === {{ $alumno->id }}"
+                    x-cloak
                     class="bg-white rounded-lg shadow-md p-6 overflow-y-auto max-h-[80vh]"
                 >
                     @include('moderador.partials.plan_vista', ['alumno' => $alumno])
