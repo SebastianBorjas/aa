@@ -21,10 +21,10 @@
     <div class="mb-4">
       <a href="{{ route('maestro.temas.ver', $subtema->id_tema) }}" class="text-blue-600 hover:underline">&larr; Volver a los subtemas</a>
     </div>
-    <div class="text-center">
+    <div class="text-center bg-gray-50 border rounded-lg p-4 max-w-2xl mx-auto">
       <h2 class="text-2xl font-bold text-blue-900">{{ $subtema->nombre }}</h2>
       @if($subtema->descripcion)
-        <p class="mt-2 text-gray-700 whitespace-pre-line">{{ $subtema->descripcion }}</p>
+        <p class="mt-2 text-gray-700 whitespace-pre-line max-w-xl mx-auto">{{ $subtema->descripcion }}</p>
       @endif
       <button @click="editSubtema = !editSubtema" class="mt-2 text-sm text-blue-600 hover:underline">Editar</button>
     </div>
