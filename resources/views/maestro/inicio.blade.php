@@ -16,7 +16,7 @@
             history.replaceState({}, '', url);
         });
      "
-     class="flex flex-col md:flex-row flex-grow relative">
+     class="flex flex-col md:flex-row flex-grow relative md:pl-64">
   <!-- Hamburger Button (Mobile Only) -->
   <button x-show="!sidebarOpen" @click="sidebarOpen = true" class="md:hidden fixed top-4 left-4 z-50 p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,7 +25,7 @@
   </button>
 
   <!-- Sidebar (Desktop) -->
-  <aside class="hidden md:block w-full md:w-64 bg-[#202c54] text-white p-4 space-y-4 md:sticky md:top-0 md:h-screen md:overflow-y-auto">
+  <aside class="hidden md:block md:fixed md:left-0 md:top-16 md:h-[calc(100vh_-_4rem)] w-64 bg-[#202c54] text-white p-4 space-y-4 overflow-y-auto">
     <nav class="flex flex-col gap-2">
       <a href="{{ route('maestro.inicio', ['tab' => 'alumnos']) }}"
          :class="{ 'bg-[#2e3a68] text-white': tab === 'alumnos' }"
