@@ -50,16 +50,17 @@
 
   <main class="flex-grow bg-white p-6">
     <div class="mb-4">
-      <a href="{{ route('alumno.inicio', ['tab' => 'tareas']) }}" class="text-blue-600 hover:underline">&larr; Volver al plan</a>
+      <a href="{{ route('alumno.tema', $subtema->id_tema) }}" class="text-blue-600 hover:underline">&larr; Volver a los subtemas</a>
     </div>
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="md:col-span-2">
+    @php $entrega = $subtema->entregas->first(); @endphp
+    <div class="max-w-3xl mx-auto space-y-6">
+      <div class="bg-white border border-gray-300 rounded-lg shadow p-6 text-center">
         <h2 class="text-2xl font-bold text-blue-900">{{ $subtema->nombre }}</h2>
         @if($subtema->descripcion)
           <p class="mt-2 text-gray-700 whitespace-pre-line">{{ $subtema->descripcion }}</p>
         @endif
         @if($subtema->rutas)
-          <ul class="list-disc ml-5 mt-2 text-sm">
+          <ul class="list-disc mt-2 text-sm text-left inline-block">
             @foreach($subtema->rutas as $ruta)
               <li>
                 <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="flex items-center gap-1 text-blue-600 hover:underline max-w-[150px]">
@@ -73,10 +74,9 @@
           </ul>
         @endif
       </div>
-      <div>
-        @php $entrega = $subtema->entregas->first(); @endphp
+      <div class="space-y-4">
         @if($entrega)
-          <div class="bg-green-50 border border-green-200 rounded p-3">
+          <div class="bg-green-50 border border-green-200 rounded p-4 text-center max-w-2xl mx-auto">
             <div class="font-semibold text-green-700 mb-1">
               Tu entrega
               @php
@@ -98,7 +98,7 @@
             </div>
             <div class="text-sm whitespace-pre-line">{{ $entrega->contenido }}</div>
             @if($entrega->rutas)
-              <ul class="list-disc ml-5 mt-2 text-sm">
+              <ul class="list-disc ml-5 mt-2 text-sm text-left">
                 @foreach($entrega->rutas as $ruta)
                   <li>
                     <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="flex items-center gap-1 text-blue-600 hover:underline max-w-[150px]">
@@ -124,51 +124,27 @@
             @endif
           </div>
           @if($entrega->estado === 'rechazado')
-            <div x-data="fileUploader()" class="mt-2">
-              <button type="button" @click="open = !open" class="px-3 py-1 bg-green-600 text-white rounded shadow hover:bg-green-700">Reenviar tarea</button>
-              <div x-show="open" x-cloak class="mt-2 border rounded p-3 bg-white">
-                <form method="POST" action="{{ route('alumno.entregar_tarea', $subtema->id) }}" enctype="multipart/form-data" class="space-y-2">
-                  @csrf
-                  <textarea name="contenido" rows="3" class="w-full border rounded p-2" required>{{ $entrega->contenido }}</textarea>
-                  @if($entrega->rutas)
-                    <ul class="list-disc ml-5 text-sm space-y-1">
-                      @foreach($entrega->rutas as $idx => $ruta)
-                        <li class="flex items-center gap-2">
-                          <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="flex items-center gap-1 text-blue-600 hover:underline max-w-[150px]">
-                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M7 2h6l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z" />
-                            </svg>
-                            <span class="truncate">{{ basename($ruta) }}</span>
-                          </a>
-                          <label class="flex items-center gap-1 text-red-600 text-xs">
-                            <input type="checkbox" name="delete_files[]" value="{{ $idx }}">Eliminar
-                          </label>
-                        </li>
-                      @endforeach
-                    </ul>
-                  @endif
-                  <div x-ref="inputs"></div>
-                  <input type="file" multiple class="hidden" x-ref="fileInput" @change="handleFiles">
-                  <template x-for="(file, index) in files" :key="file.id">
-                    <div class="flex items-center gap-2">
-                      <span class="truncate w-full" x-text="file.name"></span>
-                      <button type="button" @click="removeFile(index)" class="text-red-600 text-sm">Eliminar</button>
-                    </div>
-                  </template>
-                  <button type="button" @click="openPicker" x-show="files.length < 4" class="px-2 py-1 bg-gray-200 rounded text-sm">Agregar archivos</button>
-                  <p class="text-xs text-gray-500">Máx. 4 archivos, 2MB cada uno.</p>
-                  <button type="submit" class="px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Enviar</button>
-                </form>
-              </div>
-            </div>
-          @endif
-        @else
-          <div x-data="fileUploader()">
-            <button type="button" @click="open = !open" class="px-3 py-1 bg-green-600 text-white rounded shadow hover:bg-green-700">Entregar tarea</button>
-            <div x-show="open" x-cloak class="mt-2 border rounded p-3 bg-white">
+            <div class="bg-white border rounded p-4 shadow max-w-2xl mx-auto" x-data="fileUploader()">
               <form method="POST" action="{{ route('alumno.entregar_tarea', $subtema->id) }}" enctype="multipart/form-data" class="space-y-2">
                 @csrf
-                <textarea name="contenido" rows="3" class="w-full border rounded p-2" placeholder="Contenido" required></textarea>
+                <textarea name="contenido" rows="3" class="w-full border rounded p-2" required>{{ $entrega->contenido }}</textarea>
+                @if($entrega->rutas)
+                  <ul class="list-disc ml-5 text-sm space-y-1 text-left">
+                    @foreach($entrega->rutas as $idx => $ruta)
+                      <li class="flex items-center gap-2">
+                        <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="flex items-center gap-1 text-blue-600 hover:underline max-w-[150px]">
+                          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 2h6l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                          </svg>
+                          <span class="truncate">{{ basename($ruta) }}</span>
+                        </a>
+                        <label class="flex items-center gap-1 text-red-600 text-xs">
+                          <input type="checkbox" name="delete_files[]" value="{{ $idx }}">Eliminar
+                        </label>
+                      </li>
+                    @endforeach
+                  </ul>
+                @endif
                 <div x-ref="inputs"></div>
                 <input type="file" multiple class="hidden" x-ref="fileInput" @change="handleFiles">
                 <template x-for="(file, index) in files" :key="file.id">
@@ -182,6 +158,24 @@
                 <button type="submit" class="px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Enviar</button>
               </form>
             </div>
+          @endif
+        @else
+          <div class="bg-white border rounded p-4 shadow max-w-2xl mx-auto" x-data="fileUploader()">
+            <form method="POST" action="{{ route('alumno.entregar_tarea', $subtema->id) }}" enctype="multipart/form-data" class="space-y-2">
+              @csrf
+              <textarea name="contenido" rows="3" class="w-full border rounded p-2" placeholder="Contenido" required></textarea>
+              <div x-ref="inputs"></div>
+              <input type="file" multiple class="hidden" x-ref="fileInput" @change="handleFiles">
+              <template x-for="(file, index) in files" :key="file.id">
+                <div class="flex items-center gap-2">
+                  <span class="truncate w-full" x-text="file.name"></span>
+                  <button type="button" @click="removeFile(index)" class="text-red-600 text-sm">Eliminar</button>
+                </div>
+              </template>
+              <button type="button" @click="openPicker" x-show="files.length < 4" class="px-2 py-1 bg-gray-200 rounded text-sm">Agregar archivos</button>
+              <p class="text-xs text-gray-500">Máx. 4 archivos, 2MB cada uno.</p>
+              <button type="submit" class="px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Enviar</button>
+            </form>  
           </div>
         @endif
       </div>
@@ -199,7 +193,6 @@
 <script>
 function fileUploader() {
     return {
-        open: false,
         files: [],
         openPicker() { this.$refs.fileInput.click(); },
         handleFiles(e) {

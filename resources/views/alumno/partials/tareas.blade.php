@@ -17,7 +17,7 @@
     <h2 class="text-center text-2xl font-bold text-blue-900 mb-6">{{ $plan->nombre }}</h2>
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         @foreach($plan->temas as $tema)
-            <a href="{{ route('alumno.tema', $tema->id) }}" class="block bg-white rounded-lg shadow p-4 hover:shadow-lg hover:bg-blue-50 transition">
+            <a href="{{ route('alumno.tema', $tema->id) }}" class="block bg-white border border-gray-300 rounded-lg shadow p-4 hover:shadow-lg hover:bg-blue-100 transition">
                 <h3 class="text-lg font-semibold text-blue-800">{{ $tema->nombre }}</h3>
                 @if($tema->descripcion)
                     <p class="text-sm text-gray-600">{{ Str::limit($tema->descripcion,100) }}</p>
