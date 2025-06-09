@@ -261,4 +261,26 @@ class MaestroController extends Controller
 
         return back()->with('success', 'Entrega rechazada.');
     }
+    // Vistas detalladas
+    public function verPlan(Plan $plan)
+    {
+        $plan->load('temas');
+        return view('maestro.partials.planes.plan_show', compact('plan'));
+    }
+
+    public function verTema(Tema $tema)
+    {
+        $tema->load('subtemas');
+        return view('maestro.partials.planes.tema_show', compact('tema'));
+    }
+
+    public function verSubtema(Subtema $subtema)
+    {
+        return view('maestro.partials.planes.subtema_show', compact('subtema'));
+    }
+
+    public function formCrearSubtema(Tema $tema)
+    {
+        return view('maestro.partials.planes.subtema_create', compact('tema'));
+    }
 }

@@ -1,0 +1,113 @@
+@extends('layouts.base2')
+
+@push('vite')
+  @vite('resources/css/app.css')
+  <script src="https://unpkg.com/alpinejs" defer></script>
+@endpush
+
+@section('title', 'Subtema')
+
+@section('main')
+<div x-data="{ sidebarOpen: false, editSubtema: false }" class="flex flex-col md:flex-row flex-grow relative md:pl-64">
+  <button x-show="!sidebarOpen" @click="sidebarOpen = true" class="md:hidden fixed top-4 left-4 z-50 p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+    </svg>
+  </button>
+
+  @include('maestro.partials.sidebar')
+
+  <main class="flex-grow bg-white p-6">
+    <div class="mb-4">
+      <a href="{{ route('maestro.temas.ver', $subtema->id_tema) }}" class="text-blue-600 hover:underline">&larr; Volver a los subtemas</a>
+    </div>
+    <div class="text-center">
+      <h2 class="text-2xl font-bold text-blue-900">{{ $subtema->nombre }}</h2>
+      @if($subtema->descripcion)
+        <p class="mt-2 text-gray-700 whitespace-pre-line">{{ $subtema->descripcion }}</p>
+      @endif
+      <button @click="editSubtema = !editSubtema" class="mt-2 text-sm text-blue-600 hover:underline">Editar</button>
+    </div>
+
+    <div x-show="editSubtema" x-cloak class="mt-4 max-w-md mx-auto">
+      <form method="POST" action="{{ route('maestro.subtemas.save') }}" class="flex flex-col gap-2">
+        @csrf
+        <input type="hidden" name="id" value="{{ $subtema->id }}">
+        <input type="hidden" name="id_tema" value="{{ $subtema->id_tema }}">
+        <input type="text" name="nombre" value="{{ $subtema->nombre }}" class="border rounded px-2 py-1" required>
+        <textarea name="descripcion" class="border rounded px-2 py-1">{{ $subtema->descripcion }}</textarea>
+        <button class="px-3 py-1 bg-blue-600 text-white rounded self-start">Guardar</button>
+      </form>
+    </div>
+
+    <div class="mt-6 max-w-xl mx-auto">
+      <h3 class="font-semibold text-blue-700 mb-2">Archivos</h3>
+      @if($subtema->rutas)
+        <ul class="list-disc pl-5 space-y-1">
+          @foreach($subtema->rutas as $i => $ruta)
+            <li class="flex items-center gap-2">
+              <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="text-blue-600 underline">{{ basename($ruta) }}</a>
+              <form method="POST" action="{{ route('maestro.subtemas.deletefile', $subtema->id) }}" onsubmit="return confirm('¿Eliminar archivo?')">
+                @csrf
+                <input type="hidden" name="file_index" value="{{ $i }}">
+                <button type="submit" class="text-red-600 text-xs">Eliminar</button>
+              </form>
+            </li>
+          @endforeach
+        </ul>
+      @else
+        <p class="text-gray-500">No hay archivos</p>
+      @endif
+      <div class="mt-2" x-data="fileUploader()">
+        <form method="POST" action="{{ route('maestro.subtemas.addfile', $subtema->id) }}" enctype="multipart/form-data" class="space-y-2">
+          @csrf
+          <div x-ref="inputs"></div>
+          <input type="file" multiple class="hidden" x-ref="fileInput" @change="handleFiles">
+          <template x-for="(file, index) in files" :key="file.id">
+            <div class="flex items-center gap-2">
+              <span class="truncate w-full" x-text="file.name"></span>
+              <button type="button" @click="removeFile(index)" class="text-red-600 text-sm">Eliminar</button>
+            </div>
+          </template>
+          <button type="button" @click="openPicker" x-show="files.length < 4" class="px-2 py-1 bg-gray-200 rounded text-sm">Agregar archivos</button>
+          <p class="text-xs text-gray-500">Máx. 4 archivos, 2MB cada uno.</p>
+          <button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded">Subir</button>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+@endsection
+
+@push('vite')
+<script>
+function fileUploader() {
+    return {
+        files: [],
+        openPicker() { this.$refs.fileInput.click(); },
+        handleFiles(e) {
+            for (const file of Array.from(e.target.files)) {
+                if (this.files.length >= 4) break;
+                const id = Date.now() + Math.random();
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.name = 'archivos[]';
+                input.classList.add('hidden');
+                input.files = dt.files;
+                input.dataset.id = id;
+                this.$refs.inputs.appendChild(input);
+                this.files.push({id, name: file.name});
+            }
+            e.target.value = '';
+        },
+        removeFile(index) {
+            const removed = this.files.splice(index, 1)[0];
+            const el = this.$refs.inputs.querySelector('input[data-id="'+removed.id+'"]');
+            if (el) el.remove();
+        }
+    }
+}
+</script>
+@endpush

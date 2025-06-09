@@ -71,6 +71,11 @@ Route::middleware(['rol:maestro'])->group(function () {
     Route::get('/maestro/planes/crear', [MaestroController::class, 'planesCrear'])->name('maestro.planes.crear');
     Route::post('/maestro/planes/crear', [MaestroController::class, 'crearPlan'])->name('maestro.planes.store');
 
+    // Vistas detalladas de planes, temas y subtemas
+    Route::get('/maestro/planes/{plan}', [MaestroController::class, 'verPlan'])->name('maestro.planes.ver');
+    Route::get('/maestro/temas/{tema}', [MaestroController::class, 'verTema'])->name('maestro.temas.ver');
+    Route::get('/maestro/subtemas/{subtema}', [MaestroController::class, 'verSubtema'])->name('maestro.subtemas.ver');
+    Route::get('/maestro/temas/{tema}/subtemas/crear', [MaestroController::class, 'formCrearSubtema'])->name('maestro.subtemas.crear');
     // NUEVAS rutas para CRUD de planes, temas y subtemas
     Route::post('/maestro/planes/{id}/update', [MaestroController::class, 'actualizarPlan'])->name('maestro.planes.update');
     Route::post('/maestro/planes/{id}/delete', [MaestroController::class, 'eliminarPlan'])->name('maestro.planes.delete');

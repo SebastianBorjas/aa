@@ -25,9 +25,9 @@
                 </button>
             </form>
             @forelse($planes as $plan)
-                <div 
-                    class="bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-blue-600 shadow-lg rounded-xl p-5 cursor-pointer hover:shadow-2xl hover:scale-[1.015] transition group"
-                    @click="planEdit = {{ $plan->id }}"
+                <a
+                    href="{{ route('maestro.planes.ver', $plan->id) }}"
+                    class="bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-blue-600 shadow-lg rounded-xl p-5 block hover:shadow-2xl hover:scale-[1.015] transition group"
                 >
                     <div class="flex justify-between items-center">
                         <div>
@@ -38,7 +38,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                         </svg>
                     </div>
-                </div>
+                </a>
             @empty
                 <div class="text-center text-gray-500 py-4">No tienes planes registrados.</div>
             @endforelse
