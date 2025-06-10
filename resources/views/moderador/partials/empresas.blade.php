@@ -16,7 +16,7 @@
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-semibold text-gray-900">Lista de Empresas</h2>
                 <button 
-                    x-show="!isFormOpenEmpresa && !editIdEmpresa" 
+                    x-show="!isFormOpenEmpresa && !editIdEmpresa" x-cloak
                     x-on:click="isFormOpenEmpresa = true; editIdEmpresa = null" 
                     class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition font-medium"
                 >
@@ -77,7 +77,7 @@
         <div class="w-full lg:w-1/3">
             <!-- Registration Form -->
             <div 
-                x-show="isFormOpenEmpresa && !editIdEmpresa" 
+                x-show="isFormOpenEmpresa && !editIdEmpresa" x-cloak
                 class="bg-white rounded-lg shadow-md p-6"
             >
                 <h2 class="text-xl font-semibold text-gray-900 mb-4">Registrar Empresa</h2>
@@ -165,7 +165,7 @@
             <!-- Edit Form -->
             @foreach ($empresas as $empresa)
                 <div 
-                    x-show="editIdEmpresa === {{ $empresa->id }}"
+                    x-show="editIdEmpresa === {{ $empresa->id }}" x-cloak
                     class="bg-white rounded-lg shadow-md p-6"
                 >
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Editar Empresa</h3>

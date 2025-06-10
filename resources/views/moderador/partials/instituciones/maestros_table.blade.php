@@ -18,7 +18,7 @@
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-semibold text-gray-900">Lista de Maestros</h2>
                 <button 
-                    x-show="!isFormOpenMaestro && !editIdMaestro" 
+                    x-show="!isFormOpenMaestro && !editIdMaestro" x-cloak
                     x-on:click="isFormOpenMaestro = true; editIdMaestro = null" 
                     class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition font-medium"
                 >
@@ -73,8 +73,8 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-300">
                             @foreach ($maestros as $maestro)
-                                <tr 
-                                    x-show="selectedInstitucion == {{ $maestro->id_institucion }}"
+                                  <tr
+                                      x-show="selectedInstitucion == {{ $maestro->id_institucion }}" x-cloak
                                     x-on:click="editIdMaestro = editIdMaestro === {{ $maestro->id }} ? null : {{ $maestro->id }}; isFormOpenMaestro = false" 
                                     class="cursor-pointer hover:bg-gray-200 transition"
                                     :class="{ 'bg-gray-200': editIdMaestro === {{ $maestro->id }} }"
@@ -95,8 +95,8 @@
         <!-- Right Side: Form -->
         <div class="w-full lg:w-1/3">
             <!-- Registration Form -->
-            <div 
-                x-show="isFormOpenMaestro && !editIdMaestro" 
+              <div
+                  x-show="isFormOpenMaestro && !editIdMaestro" x-cloak
                 class="bg-white rounded-lg shadow-md p-6"
             >
                 <h2 class="text-xl font-semibold text-gray-900 mb-4">Registrar Maestro</h2>
@@ -196,9 +196,9 @@
             </div>
 
             <!-- Edit Form -->
-            @foreach ($maestros as $maestro)
-                <div 
-                    x-show="editIdMaestro === {{ $maestro->id }}"
+              @foreach ($maestros as $maestro)
+                  <div
+                      x-show="editIdMaestro === {{ $maestro->id }}" x-cloak
                     class="bg-white rounded-lg shadow-md p-6"
                 >
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Editar Maestro</h3>

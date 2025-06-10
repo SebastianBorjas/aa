@@ -54,14 +54,14 @@
 
     <!-- Sub-Partial Includes -->
     <div class="overflow-x-auto">
-        <div x-show="activeTab === 'instituciones'" x-transition>
+        <div x-show="activeTab === 'instituciones'" x-transition x-cloak>
             @include('moderador.partials.instituciones.instituciones_table', [
                 'instituciones' => $instituciones,
                 'isFormOpenInstitucion' => 'isFormOpenInstitucion',
                 'editIdInstitucion' => 'editIdInstitucion'
             ])
         </div>
-        <div x-show="activeTab === 'maestros'" x-transition>
+        <div x-show="activeTab === 'maestros'" x-transition x-cloak>
             @include('moderador.partials.instituciones.maestros_table', [
                 'maestros' => $maestros,
                 'instituciones' => $instituciones,
@@ -69,7 +69,7 @@
                 'editIdMaestro' => 'editIdMaestro'
             ])
         </div>
-        <div x-show="activeTab === 'especialidades'" x-transition>
+        <div x-show="activeTab === 'especialidades'" x-transition x-cloak>
             @include('moderador.partials.instituciones.especialidades_table', [
                 'especialidades' => $especialidades,
                 'instituciones' => $instituciones,
