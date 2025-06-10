@@ -143,8 +143,9 @@
         <!-- Right Side: Form -->
         <div class="w-full lg:w-1/3">
             <!-- Registration Form -->
-            <div 
-                x-show="isFormOpenAlumno && !editIdAlumno" 
+            <div
+                x-show="isFormOpenAlumno && !editIdAlumno"
+                x-cloak
                 class="bg-white rounded-lg shadow-md p-6"
             >
                 <h2 class="text-xl font-semibold text-gray-900 mb-4">Registrar Alumno</h2>
