@@ -8,7 +8,7 @@
 @section('title', 'Panel Maestro')
 
 @section('main')
-<div x-data="{ tab: '{{ request()->query('tab', 'alumnos') }}', sidebarOpen: false }"
+<div x-data="{ tab: '{{ request()->query('tab', 'alumnos') }}', sidebarOpen: false }" x-cloak
      x-init="
         $watch('tab', value => {
             const url = new URL(window.location);

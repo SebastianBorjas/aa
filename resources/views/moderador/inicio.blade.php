@@ -8,7 +8,7 @@
 @section('title', 'Panel Moderador')
 
 @section('main')
-<div x-data="{ tab: '{{ request()->query('tab', 'alumnos') }}', sidebarOpen: false }" class="flex flex-col md:flex-row flex-grow relative md:pl-64">
+<div x-data="{ tab: '{{ request()->query('tab', 'alumnos') }}', sidebarOpen: false }" class="flex flex-col md:flex-row flex-grow relative md:pl-64" x-cloak>
   <!-- Hamburger Button (Mobile Only) -->
   <button x-show="!sidebarOpen" @click="sidebarOpen = true" class="md:hidden fixed top-4 left-4 z-50 p-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,15 +95,15 @@
 
   <!-- Contenido principal -->
   <main class="flex-grow bg-white p-6">
-    <div x-show="tab === 'alumnos'" x-transition>
+    <div x-show="tab === 'alumnos'" x-transition x-cloak>
       @include('moderador.partials.alumnos')
     </div>
 
-    <div x-show="tab === 'instituciones' || tab === 'maestros' || tab === 'especialidades'" x-transition>
+    <div x-show="tab === 'instituciones' || tab === 'maestros' || tab === 'especialidades'" x-transition x-cloak>
       @include('moderador.partials.instituciones', ['subtab' => $tab])
     </div>
 
-    <div x-show="tab === 'empresas'" x-transition>
+    <div x-show="tab === 'empresas'" x-transition x-cloak>
       @include('moderador.partials.empresas')
     </div>
   </main>
