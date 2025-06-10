@@ -32,7 +32,7 @@
                             </div>
                         </td>
                     </tr>
-                    <tr x-show="expanded === 1" x-transition class="bg-gray-50">
+                    <tr x-show="expanded === 1" x-transition x-cloak class="bg-gray-50">
                         <td colspan="3" class="px-4 py-2 max-h-60 overflow-y-auto">
                             <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
                                 <thead class="bg-gray-100">
@@ -83,7 +83,7 @@
                             </div>
                         </td>
                     </tr>
-                    <tr x-show="expanded === 2" x-transition class="bg-gray-50">
+                    <tr x-show="expanded === 2" x-transition x-cloak class="bg-gray-50">
                         <td colspan="3" class="px-4 py-2 max-h-60 overflow-y-auto">
                             <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
                                 <thead class="bg-gray-100">
@@ -123,7 +123,7 @@
                             </div>
                         </td>
                     </tr>
-                    <tr x-show="expanded === 3" x-transition class="bg-gray-50">
+                    <tr x-show="expanded === 3" x-transition x-cloak class="bg-gray-50">
                         <td colspan="3" class="px-4 py-2 max-h-60 overflow-y-auto">
                             <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
                                 <thead class="bg-gray-100">
@@ -200,3 +200,6 @@
         </div>
     </div>
 </div>
+<style>
+    [x-cloak] { display: none; }
+</style>
