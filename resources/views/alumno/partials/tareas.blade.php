@@ -17,11 +17,18 @@
     <h2 class="text-center text-2xl font-bold text-blue-900 mb-6">{{ $plan->nombre }}</h2>
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         @foreach($plan->temas as $tema)
-            <a href="{{ route('alumno.tema', $tema->id) }}" class="block bg-white border border-gray-300 rounded-lg shadow p-4 hover:shadow-lg hover:bg-blue-100 transition">
-                <h3 class="text-lg font-semibold text-blue-800">{{ $tema->nombre }}</h3>
-                @if($tema->descripcion)
-                    <p class="text-sm text-gray-600">{{ Str::limit($tema->descripcion,100) }}</p>
-                @endif
+            <a href="{{ route('alumno.tema', $tema->id) }}" class="block bg-gray-50 border border-gray-300 rounded-lg p-4 shadow-sm hover:shadow-md transition-transform transform hover:-translate-y-1 group">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <div class="font-semibold text-gray-900 group-hover:text-blue-800">{{ $tema->nombre }}</div>
+                        @if($tema->descripcion)
+                            <div class="text-xs text-gray-500 mt-1">{{ Str::limit($tema->descripcion, 80) }}</div>
+                        @endif
+                    </div>
+                    <svg class="w-5 h-5 text-blue-700 group-hover:text-blue-900 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </div>
             </a>
         @endforeach
     </div>
