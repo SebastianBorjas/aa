@@ -43,11 +43,25 @@
     <div class="mt-6 max-w-xl mx-auto">
       <h3 class="font-semibold text-blue-700 mb-2">Archivos</h3>
       @if($subtema->rutas)
-        <ul class="list-disc pl-5 space-y-1">
+        <ul class="flex flex-wrap gap-2">
           @foreach($subtema->rutas as $i => $ruta)
-            <li class="flex items-center gap-2">
-              <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="text-blue-600 underline">{{ basename($ruta) }}</a>
-              <form method="POST" action="{{ route('maestro.subtemas.deletefile', $subtema->id) }}" onsubmit="return confirm('¿Eliminar archivo?')">
+            @php $isImage = in_array(Str::lower(pathinfo($ruta, PATHINFO_EXTENSION)), ['jpg','jpeg','png','gif','bmp','webp']); @endphp
+            <li class="relative p-2 bg-gray-50 border rounded shadow-sm">
+              <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="block">
+                @if($isImage)
+                  <img src="{{ asset('storage/'.$ruta) }}" alt="archivo" class="w-20 h-20 object-contain rounded">
+                @else
+                  <svg class="w-20 h-20 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 2h6l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                  </svg>
+                @endif
+              </a>
+              <a href="{{ asset('storage/'.$ruta) }}" download class="absolute top-1 right-1 bg-blue-600 hover:bg-blue-700 text-white p-1 rounded-full">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v9m0 0l-3-3m3 3l3-3M4 19h16" />
+                </svg>
+              </a>
+              <form method="POST" action="{{ route('maestro.subtemas.deletefile', $subtema->id) }}" onsubmit="return confirm('¿Eliminar archivo?')" class="absolute bottom-1 left-1">
                 @csrf
                 <input type="hidden" name="file_index" value="{{ $i }}">
                 <button type="submit" class="text-red-600 text-xs">Eliminar</button>
