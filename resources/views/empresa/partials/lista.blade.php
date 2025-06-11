@@ -36,7 +36,7 @@
     $maxFecha = Carbon::parse($maxCalc ?? now())->min(Carbon::now())->toDateString();
 @endphp
 
-<div class="space-y-4">
+<div class="space-y-4 max-w-3xl mx-auto">
     <form method="GET" action="{{ route('empresa.inicio') }}" class="flex items-center space-x-2">
         <input type="hidden" name="tab" value="lista">
         <input type="date" name="fecha" value="{{ $fecha->toDateString() }}" min="{{ $minFecha }}" max="{{ $maxFecha }}" class="border rounded px-2 py-1" onchange="this.form.submit()">
@@ -86,13 +86,22 @@
                                     <span>{{ $alumno->name }}</span>
                                 </td>
                                 <td class="px-3 py-2 text-center">
-                                    <input type="radio" class="form-radio h-4 w-4 {{ $registrado ? 'text-blue-600' : 'text-green-600' }}" name="estado[{{ $alumno->id }}]" value="asistencia" {{ $estado == 'asistencia' ? 'checked' : '' }}>
+                                    <label class="inline-flex items-center justify-center">
+                                        <input type="radio" name="estado[{{ $alumno->id }}]" value="asistencia" class="sr-only peer" {{ $estado == 'asistencia' ? 'checked' : '' }}>
+                                        <span class="w-6 h-6 flex items-center justify-center rounded-full border cursor-pointer text-sm font-semibold transition {{ $registrado ? 'peer-checked:bg-blue-600' : 'peer-checked:bg-green-600' }} peer-checked:text-white">✓</span>
+                                    </label>
                                 </td>
                                 <td class="px-3 py-2 text-center">
-                                    <input type="radio" class="form-radio h-4 w-4 {{ $registrado ? 'text-blue-600' : 'text-green-600' }}" name="estado[{{ $alumno->id }}]" value="falta" {{ $estado == 'falta' ? 'checked' : '' }}>
+                                    <label class="inline-flex items-center justify-center">
+                                        <input type="radio" name="estado[{{ $alumno->id }}]" value="falta" class="sr-only peer" {{ $estado == 'falta' ? 'checked' : '' }}>
+                                        <span class="w-6 h-6 flex items-center justify-center rounded-full border cursor-pointer text-sm font-semibold transition {{ $registrado ? 'peer-checked:bg-blue-600' : 'peer-checked:bg-green-600' }} peer-checked:text-white">✕</span>
+                                    </label>
                                 </td>
                                 <td class="px-3 py-2 text-center">
-                                    <input type="radio" class="form-radio h-4 w-4 {{ $registrado ? 'text-blue-600' : 'text-green-600' }}" name="estado[{{ $alumno->id }}]" value="justificado" {{ $estado == 'justificado' ? 'checked' : '' }}>
+                                    <label class="inline-flex items-center justify-center">
+                                        <input type="radio" name="estado[{{ $alumno->id }}]" value="justificado" class="sr-only peer" {{ $estado == 'justificado' ? 'checked' : '' }}>
+                                        <span class="w-6 h-6 flex items-center justify-center rounded-full border cursor-pointer text-sm font-semibold transition {{ $registrado ? 'peer-checked:bg-blue-600' : 'peer-checked:bg-green-600' }} peer-checked:text-white">J</span>
+                                    </label>
                                 </td>
                             </tr>
                         @endforeach
