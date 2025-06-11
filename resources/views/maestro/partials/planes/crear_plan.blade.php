@@ -10,7 +10,7 @@
         <div class="bg-red-100 text-red-900 p-2 rounded mb-2 text-center shadow">{{ session('error') }}</div>
     @endif
 
-    <div class="max-w-2xl mx-auto w-full px-2">
+    <div class="max-w-4xl mx-auto w-full px-2">
 
         {{-- Vista: CARDS --}}
         <div x-show="!planEdit" class="flex flex-col gap-5">
@@ -24,24 +24,26 @@
                     Crear plan
                 </button>
             </form>
-            @forelse($planes as $plan)
-                <a
-                    href="{{ route('maestro.planes.ver', $plan->id) }}"
-                    class="bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-blue-600 shadow-lg rounded-xl p-5 block hover:shadow-2xl hover:scale-[1.015] transition group"
-                >
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <div class="font-bold text-xl text-blue-900 group-hover:underline tracking-wide">{{ $plan->nombre }}</div>
-                            <div class="text-xs text-gray-500">Creado el {{ $plan->created_at->format('d/m/Y H:i') }}</div>
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                @forelse($planes as $plan)
+                    <a
+                        href="{{ route('maestro.planes.ver', $plan->id) }}"
+                        class="block bg-gray-50 border border-gray-300 rounded-lg p-4 shadow-sm hover:shadow-md transition-transform transform hover:-translate-y-1 group"
+                    >
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="font-semibold text-gray-900 group-hover:text-blue-800">{{ $plan->nombre }}</div>
+                                <div class="text-xs text-gray-500 mt-1">Creado el {{ $plan->created_at->format('d/m/Y H:i') }}</div>
+                            </div>
+                            <svg class="w-5 h-5 text-blue-700 group-hover:text-blue-900 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
                         </div>
-                        <svg class="w-7 h-7 text-blue-500 group-hover:text-blue-800 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </div>
-                </a>
-            @empty
-                <div class="text-center text-gray-500 py-4">No tienes planes registrados.</div>
-            @endforelse
+                    </a>
+                @empty
+                    <div class="text-center text-gray-500 py-4 sm:col-span-2 lg:col-span-3">No tienes planes registrados.</div>
+                @endforelse
+            </div>
         </div>
 
         {{-- Vista: EDICIÓN --}}
