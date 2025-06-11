@@ -55,58 +55,102 @@
         <form method="POST" action="{{ route('empresa.guardarLista') }}" class="space-y-4">
             @csrf
             <input type="hidden" name="fecha" value="{{ $fecha->toDateString() }}">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-300">
-                    <thead class="bg-gray-700 text-white">
-                        <tr>
-                            <th class="px-3 py-2 text-left text-xs font-medium uppercase">Alumno</th>
-                            <th class="px-3 py-2 text-center text-xs font-medium uppercase">Asistencia</th>
-                            <th class="px-3 py-2 text-center text-xs font-medium uppercase">Falta</th>
-                            <th class="px-3 py-2 text-center text-xs font-medium uppercase">Justificado</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($alumnos as $alumno)
-                            @php
-                                $registro = $registros[$alumno->id] ?? null;
-                                $estado = $registro->estado ?? 'asistencia';
-                                $registrado = !is_null($registro);
-                            @endphp
-                            <tr class="{{ $registrado ? 'bg-blue-200 border border-blue-600 text-blue-900' : 'bg-green-200 border border-green-600 text-green-900' }}">
-                                <td class="px-3 py-2 flex items-center gap-2">
-                                    @if($registrado)
-                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    @else
-                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <circle cx="12" cy="12" r="9" stroke-width="2" />
-                                        </svg>
-                                    @endif
-                                    <span>{{ $alumno->name }}</span>
-                                </td>
-                                <td class="px-3 py-2 text-center">
-                                    <label class="inline-flex items-center justify-center">
-                                        <input type="radio" name="estado[{{ $alumno->id }}]" value="asistencia" class="sr-only peer" {{ $estado == 'asistencia' ? 'checked' : '' }}>
-                                        <span class="w-6 h-6 flex items-center justify-center rounded-full border cursor-pointer text-sm font-semibold transition {{ $registrado ? 'peer-checked:bg-blue-600' : 'peer-checked:bg-green-600' }} peer-checked:text-white">✓</span>
-                                    </label>
-                                </td>
-                                <td class="px-3 py-2 text-center">
-                                    <label class="inline-flex items-center justify-center">
-                                        <input type="radio" name="estado[{{ $alumno->id }}]" value="falta" class="sr-only peer" {{ $estado == 'falta' ? 'checked' : '' }}>
-                                        <span class="w-6 h-6 flex items-center justify-center rounded-full border cursor-pointer text-sm font-semibold transition {{ $registrado ? 'peer-checked:bg-blue-600' : 'peer-checked:bg-green-600' }} peer-checked:text-white">✕</span>
-                                    </label>
-                                </td>
-                                <td class="px-3 py-2 text-center">
-                                    <label class="inline-flex items-center justify-center">
-                                        <input type="radio" name="estado[{{ $alumno->id }}]" value="justificado" class="sr-only peer" {{ $estado == 'justificado' ? 'checked' : '' }}>
-                                        <span class="w-6 h-6 flex items-center justify-center rounded-full border cursor-pointer text-sm font-semibold transition {{ $registrado ? 'peer-checked:bg-blue-600' : 'peer-checked:bg-green-600' }} peer-checked:text-white">J</span>
-                                    </label>
-                                </td>
+            <div class="space-y-2 sm:space-y-0">
+                <div class="sm:hidden space-y-2">
+                    @foreach($alumnos as $alumno)
+                        @php
+                            $registro = $registros[$alumno->id] ?? null;
+                            $estado = $registro->estado ?? 'asistencia';
+                            $registrado = !is_null($registro);
+                        @endphp
+                        <div class="p-2 rounded {{ $registrado ? 'bg-blue-200 border border-blue-600 text-blue-900' : 'bg-green-200 border border-green-600 text-green-900' }}">
+                            <div class="flex items-center gap-2">
+                                @if($registrado)
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                        <circle cx="12" cy="12" r="9" />
+                                    </svg>
+                                @else
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v8m4-4H8" />
+                                        <circle cx="12" cy="12" r="9" />
+                                    </svg>
+                                @endif
+                                <span class="font-semibold flex-1">{{ $alumno->name }}</span>
+                            </div>
+                            <div class="mt-2 flex justify-around">
+                                <label class="inline-flex items-center justify-center">
+                                    <input type="radio" name="estado[{{ $alumno->id }}]" value="asistencia" class="sr-only peer" {{ $estado == 'asistencia' ? 'checked' : '' }}>
+                                    <span class="w-6 h-6 flex items-center justify-center rounded-full border cursor-pointer text-sm font-semibold transition {{ $registrado ? 'peer-checked:bg-blue-600' : 'peer-checked:bg-green-600' }} peer-checked:text-white">✓</span>
+                                </label>
+                                <label class="inline-flex items-center justify-center">
+                                    <input type="radio" name="estado[{{ $alumno->id }}]" value="falta" class="sr-only peer" {{ $estado == 'falta' ? 'checked' : '' }}>
+                                    <span class="w-6 h-6 flex items-center justify-center rounded-full border cursor-pointer text-sm font-semibold transition {{ $registrado ? 'peer-checked:bg-blue-600' : 'peer-checked:bg-green-600' }} peer-checked:text-white">✕</span>
+                                </label>
+                                <label class="inline-flex items-center justify-center">
+                                    <input type="radio" name="estado[{{ $alumno->id }}]" value="justificado" class="sr-only peer" {{ $estado == 'justificado' ? 'checked' : '' }}>
+                                    <span class="w-6 h-6 flex items-center justify-center rounded-full border cursor-pointer text-sm font-semibold transition {{ $registrado ? 'peer-checked:bg-blue-600' : 'peer-checked:bg-green-600' }} peer-checked:text-white">J</span>
+                                </label>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <div class="hidden sm:block overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-300">
+                        <thead class="bg-gray-700 text-white">
+                            <tr>
+                                <th class="px-3 py-2 text-left text-xs font-medium uppercase">Alumno</th>
+                                <th class="px-3 py-2 text-center text-xs font-medium uppercase">Asistencia</th>
+                                <th class="px-3 py-2 text-center text-xs font-medium uppercase">Falta</th>
+                                <th class="px-3 py-2 text-center text-xs font-medium uppercase">Justificado</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach($alumnos as $alumno)
+                                @php
+                                    $registro = $registros[$alumno->id] ?? null;
+                                    $estado = $registro->estado ?? 'asistencia';
+                                    $registrado = !is_null($registro);
+                                @endphp
+                                <tr class="{{ $registrado ? 'bg-blue-200 border border-blue-600 text-blue-900' : 'bg-green-200 border border-green-600 text-green-900' }}">
+                                    <td class="px-3 py-2 flex items-center gap-2">
+                                        @if($registrado)
+                                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                                <circle cx="12" cy="12" r="9" />
+                                            </svg>
+                                        @else
+                                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v8m4-4H8" />
+                                                <circle cx="12" cy="12" r="9" />
+                                            </svg>
+                                        @endif
+                                        <span>{{ $alumno->name }}</span>
+                                    </td>
+                                    <td class="px-3 py-2 text-center">
+                                        <label class="inline-flex items-center justify-center">
+                                            <input type="radio" name="estado[{{ $alumno->id }}]" value="asistencia" class="sr-only peer" {{ $estado == 'asistencia' ? 'checked' : '' }}>
+                                            <span class="w-6 h-6 flex items-center justify-center rounded-full border cursor-pointer text-sm font-semibold transition {{ $registrado ? 'peer-checked:bg-blue-600' : 'peer-checked:bg-green-600' }} peer-checked:text-white">✓</span>
+                                        </label>
+                                    </td>
+                                    <td class="px-3 py-2 text-center">
+                                        <label class="inline-flex items-center justify-center">
+                                            <input type="radio" name="estado[{{ $alumno->id }}]" value="falta" class="sr-only peer" {{ $estado == 'falta' ? 'checked' : '' }}>
+                                            <span class="w-6 h-6 flex items-center justify-center rounded-full border cursor-pointer text-sm font-semibold transition {{ $registrado ? 'peer-checked:bg-blue-600' : 'peer-checked:bg-green-600' }} peer-checked:text-white">✕</span>
+                                        </label>
+                                    </td>
+                                    <td class="px-3 py-2 text-center">
+                                        <label class="inline-flex items-center justify-center">
+                                            <input type="radio" name="estado[{{ $alumno->id }}]" value="justificado" class="sr-only peer" {{ $estado == 'justificado' ? 'checked' : '' }}>
+                                            <span class="w-6 h-6 flex items-center justify-center rounded-full border cursor-pointer text-sm font-semibold transition {{ $registrado ? 'peer-checked:bg-blue-600' : 'peer-checked:bg-green-600' }} peer-checked:text-white">J</span>
+                                        </label>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Guardar</button>
         </form>
