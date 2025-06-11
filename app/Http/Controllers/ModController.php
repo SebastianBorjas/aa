@@ -108,6 +108,9 @@ class ModController extends Controller
             abort(403, 'No autorizado para eliminar esta empresa.');
         }
 
+        if ($empresa->user) {
+            $empresa->user->delete();
+        }
         $empresa->delete();
 
         return redirect()->route('moderador.inicio', ['tab' => 'empresas'])
@@ -170,6 +173,9 @@ class ModController extends Controller
             abort(403, 'No autorizado para eliminar esta institución.');
         }
 
+        if ($institucion->user) {
+            $institucion->user->delete();
+        }
         $institucion->delete();
 
         return redirect()->route('moderador.inicio', ['tab' => 'instituciones'])
@@ -267,6 +273,9 @@ class ModController extends Controller
             abort(403, 'No autorizado para eliminar este maestro.');
         }
 
+        if ($maestro->user) {
+            $maestro->user->delete();
+        }
         $maestro->delete();
 
         return redirect()->route('moderador.inicio', ['tab' => 'maestros'])

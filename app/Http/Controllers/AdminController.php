@@ -81,6 +81,9 @@ class AdminController extends Controller
     public function eliminarModerador($id)
     {
         $moderador = Moderador::findOrFail($id);
+        if ($moderador->user) {
+            $moderador->user->delete();
+        }
         $moderador->delete();
 
         return response()->json(['message' => 'Moderador eliminado']);
