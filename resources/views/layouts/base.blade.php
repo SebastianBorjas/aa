@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>@yield('title')</title>
+  <link rel="icon" href="{{ asset('images/lgo.png') }}" type="image/png">
 
   {{-- sección opcional para inyectar CSS/JS extra en cada layout --}}
   @stack('vite')
