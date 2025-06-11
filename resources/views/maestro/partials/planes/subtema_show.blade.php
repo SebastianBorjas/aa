@@ -64,7 +64,11 @@
               <form method="POST" action="{{ route('maestro.subtemas.deletefile', $subtema->id) }}" onsubmit="return confirm('¿Eliminar archivo?')" class="absolute bottom-1 left-1">
                 @csrf
                 <input type="hidden" name="file_index" value="{{ $i }}">
-                <button type="submit" class="text-red-600 text-xs">Eliminar</button>
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white p-1 rounded-full">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3m-1 0h8" />
+                  </svg>
+                </button>
               </form>
             </li>
           @endforeach
