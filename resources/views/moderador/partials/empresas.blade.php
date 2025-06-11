@@ -49,6 +49,7 @@
                         <thead class="bg-gray-700 text-white">
                             <tr>
                                 <th class="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">Nombre</th>
+                                <th class="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">Responsable</th>
                                 <th class="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">Correo</th>
                                 <th class="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">Teléfono</th>
                                 <th class="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">Creado</th>
@@ -62,6 +63,7 @@
                                     :class="{ 'bg-gray-200': editIdEmpresa === {{ $empresa->id }} }"
                                 >
                                     <td class="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $empresa->name }}</td>
+                                    <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">{{ $empresa->responsable }}</td>
                                     <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">{{ $empresa->user->email }}</td>
                                     <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">{{ $empresa->telefono }}</td>
                                     <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">{{ $empresa->created_at->format('d/m/Y') }}</td>
@@ -87,21 +89,33 @@
                     <div class="space-y-4">
                         <div>
                             <label for="nombre_empresa" class="block text-sm font-medium text-gray-700">Nombre de la Empresa</label>
-                            <input 
-                                type="text" 
-                                id="nombre_empresa" 
-                                name="nombre" 
+                            <input
+                                type="text"
+                                id="nombre_empresa"
+                                name="nombre"
                                 value="{{ old('nombre') }}"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
                                 placeholder="Ingresa el nombre"
                                 required
                             >
                         </div>
                         <div>
+                            <label for="responsable_empresa" class="block text-sm font-medium text-gray-700">Responsable</label>
+                            <input
+                                type="text"
+                                id="responsable_empresa"
+                                name="responsable"
+                                value="{{ old('responsable') }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                placeholder="Nombre del responsable"
+                                required
+                            >
+                        </div>
+                        <div>
                             <label for="correo_empresa" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-                            <input 
-                                type="email" 
-                                id="correo_empresa" 
+                            <input
+                                type="email"
+                                id="correo_empresa"
                                 name="correo" 
                                 value="{{ old('correo') }}"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
@@ -176,20 +190,31 @@
                         <div class="space-y-4">
                             <div>
                                 <label for="nombre_empresa_{{ $empresa->id }}" class="block text-sm font-medium text-gray-700">Nombre</label>
-                                <input 
-                                    type="text" 
-                                    id="nombre_empresa_{{ $empresa->id }}" 
-                                    name="nombre" 
+                                <input
+                                    type="text"
+                                    id="nombre_empresa_{{ $empresa->id }}"
+                                    name="nombre"
                                     value="{{ old('nombre', $empresa->name) }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    required
+                                >
+                            </div>
+                            <div>
+                                <label for="responsable_empresa_{{ $empresa->id }}" class="block text-sm font-medium text-gray-700">Responsable</label>
+                                <input
+                                    type="text"
+                                    id="responsable_empresa_{{ $empresa->id }}"
+                                    name="responsable"
+                                    value="{{ old('responsable', $empresa->responsable) }}"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
                                     required
                                 >
                             </div>
                             <div>
                                 <label for="correo_empresa_{{ $empresa->id }}" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-                                <input 
-                                    type="email" 
-                                    id="correo_empresa_{{ $empresa->id }}" 
+                                <input
+                                    type="email"
+                                    id="correo_empresa_{{ $empresa->id }}"
                                     name="correo" 
                                     value="{{ old('correo', $empresa->user->email) }}"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" 

@@ -88,6 +88,7 @@ class PlantelesDemoSeeder extends Seeder
                     'id_user'    => $empUserId,
                     'id_plantel' => $plantel->id,
                     'name'       => "Empresa $empresaCount",
+                    'responsable'=> "Responsable $empresaCount",
                     'telefono'   => $telefono,
                 ]);
                 $empresaCount++;

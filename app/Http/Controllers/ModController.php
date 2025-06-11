@@ -36,6 +36,7 @@ class ModController extends Controller
             'nombre' => 'required|string|max:255',
             'correo' => 'required|email|unique:users,email',
             'contrasena' => 'required|string|min:6|confirmed',
+            'responsable' => 'required|string|max:255',
             'telefono' => 'required|string|max:20',
         ]);
 
@@ -51,6 +52,7 @@ class ModController extends Controller
             'id_user' => $user->id,
             'id_plantel' => $moderador->id_plantel,
             'name' => $validated['nombre'],
+            'responsable' => $validated['responsable'],
             'telefono' => $validated['telefono'],
         ]);
 
@@ -71,6 +73,7 @@ class ModController extends Controller
 
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
+            'responsable' => 'required|string|max:255',
             'telefono' => 'required|string|max:20',
             'correo' => 'required|email|unique:users,email,' . $empresa->user->id,
             'contrasena' => 'nullable|string|min:6|confirmed',
@@ -86,6 +89,7 @@ class ModController extends Controller
 
         $empresa->update([
             'name' => $validated['nombre'],
+            'responsable' => $validated['responsable'],
             'telefono' => $validated['telefono'],
         ]);
 

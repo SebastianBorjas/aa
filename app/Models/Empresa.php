@@ -18,6 +18,7 @@ class Empresa extends Model
         'id_user',
         'id_plantel',
         'name',
+        'responsable',
         'telefono',
     ];
 
