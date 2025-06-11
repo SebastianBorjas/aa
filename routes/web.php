@@ -33,7 +33,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->n
 
 
 // Panel administrador protegido
-Route::middleware('rol:administrador')->group(function () {
+Route::middleware(['rol:administrador', 'nocache'])->group(function () {
     Route::get('/admin/inicio', [AdminController::class, 'inicio'])->name('admin.inicio');
     Route::post('/admin/registrar-plantel', [AdminController::class, 'registrarPlantel'])->name('admin.registrar_plantel');
     Route::post('/admin/registrar-moderador', [AdminController::class, 'registrarModerador'])->name('admin.registrar_moderador');
@@ -44,7 +44,7 @@ Route::middleware('rol:administrador')->group(function () {
 });
 
 // Panel moderador protegido
-Route::middleware(['rol:moderador'])->group(function () {
+Route::middleware(['rol:moderador', 'nocache'])->group(function () {
     Route::get('/moderador/inicio', [ModController::class, 'inicio'])->name('moderador.inicio');
     Route::post('/moderador/empresas', [ModController::class, 'registerEmpresa'])->name('moderador.registerEmpresa');
     Route::put('/moderador/empresas/{empresa}', [ModController::class, 'updateEmpresa'])->name('moderador.updateEmpresa');
@@ -66,7 +66,7 @@ Route::middleware(['rol:moderador'])->group(function () {
     Route::get('/moderador/especialidades-por-institucion/{institucion}', [ModController::class, 'getEspecialidadesPorInstitucion'])->name('moderador.especialidadesPorInstitucion');
 });
 
-Route::middleware(['rol:maestro'])->group(function () {
+Route::middleware(['rol:maestro', 'nocache'])->group(function () {
     Route::get('/maestro/inicio', [MaestroController::class, 'inicio'])->name('maestro.inicio');
     Route::get('/maestro/planes/crear', [MaestroController::class, 'planesCrear'])->name('maestro.planes.crear');
     Route::post('/maestro/planes/crear', [MaestroController::class, 'crearPlan'])->name('maestro.planes.store');
@@ -98,14 +98,14 @@ Route::middleware(['rol:maestro'])->group(function () {
 
 
 // Panel alumno protegido
-Route::middleware(['rol:alumno'])->group(function () {
+Route::middleware(['rol:alumno', 'nocache'])->group(function () {
     Route::get('/alumno/inicio', [AlumnoController::class, 'inicio'])->name('alumno.inicio');
     Route::get('/alumno/temas/{tema}', [AlumnoController::class, 'verTema'])->name('alumno.tema');
     Route::get('/alumno/subtemas/{subtema}', [AlumnoController::class, 'verSubtema'])->name('alumno.subtema');
     Route::post('/alumno/subtemas/{subtema}/entregar', [AlumnoController::class, 'entregarTarea'])->name('alumno.entregar_tarea');
 });
 
-Route::middleware(['rol:empresa'])->group(function () {
+Route::middleware(['rol:empresa', 'nocache'])->group(function () {
     Route::get('/empresa/inicio', [EmpresaController::class, 'inicio'])->name('empresa.inicio');
     Route::post('/empresa/lista/guardar', [EmpresaController::class, 'guardarLista'])->name('empresa.guardarLista');
     Route::post('/empresa/entregas/{entrega}/verificar', [EmpresaController::class, 'verificarEntrega'])->name('empresa.entregas.verificar');

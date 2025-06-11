@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'rol' => \App\Http\Middleware\RolMiddleware::class,
+            'nocache' => \App\Http\Middleware\PreventBackHistory::class,
         ]);
     })
 
