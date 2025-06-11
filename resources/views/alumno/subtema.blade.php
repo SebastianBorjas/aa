@@ -60,14 +60,18 @@
           <p class="mt-2 text-gray-700 whitespace-pre-line">{{ $subtema->descripcion }}</p>
         @endif
         @if($subtema->rutas)
-          <ul class="list-disc mt-2 text-sm text-left inline-block">
+          <ul class="flex flex-wrap justify-center gap-2 mt-2">
             @foreach($subtema->rutas as $ruta)
+              @php $isImage = in_array(Str::lower(pathinfo($ruta, PATHINFO_EXTENSION)), ['jpg','jpeg','png','gif','bmp','webp']); @endphp
               <li>
-                <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="flex items-center gap-1 text-blue-600 hover:underline max-w-[150px]">
-                  <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 2h6l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z" />
-                  </svg>
-                  <span class="truncate">{{ basename($ruta) }}</span>
+                <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="block">
+                  @if($isImage)
+                    <img src="{{ asset('storage/'.$ruta) }}" alt="archivo" class="w-12 h-12 object-cover rounded">
+                  @else
+                    <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M7 2h6l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                    </svg>
+                  @endif
                 </a>
               </li>
             @endforeach
@@ -98,14 +102,18 @@
             </div>
             <div class="text-sm whitespace-pre-line">{{ $entrega->contenido }}</div>
             @if($entrega->rutas)
-              <ul class="list-disc ml-5 mt-2 text-sm text-left">
+              <ul class="flex flex-wrap justify-center gap-2 mt-2">
                 @foreach($entrega->rutas as $ruta)
+                  @php $isImage = in_array(Str::lower(pathinfo($ruta, PATHINFO_EXTENSION)), ['jpg','jpeg','png','gif','bmp','webp']); @endphp
                   <li>
-                    <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="flex items-center gap-1 text-blue-600 hover:underline max-w-[150px]">
-                      <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 2h6l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z" />
-                      </svg>
-                      <span class="truncate">{{ basename($ruta) }}</span>
+                    <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="block">
+                      @if($isImage)
+                        <img src="{{ asset('storage/'.$ruta) }}" alt="archivo" class="w-12 h-12 object-cover rounded">
+                      @else
+                        <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M7 2h6l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                        </svg>
+                      @endif
                     </a>
                   </li>
                 @endforeach
@@ -129,14 +137,18 @@
                 @csrf
                 <textarea name="contenido" rows="3" class="w-full border rounded p-2" required>{{ $entrega->contenido }}</textarea>
                 @if($entrega->rutas)
-                  <ul class="list-disc ml-5 text-sm space-y-1 text-left">
+                  <ul class="flex flex-wrap gap-2 text-sm">
                     @foreach($entrega->rutas as $idx => $ruta)
+                      @php $isImage = in_array(Str::lower(pathinfo($ruta, PATHINFO_EXTENSION)), ['jpg','jpeg','png','gif','bmp','webp']); @endphp
                       <li class="flex items-center gap-2">
-                        <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="flex items-center gap-1 text-blue-600 hover:underline max-w-[150px]">
-                          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 2h6l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z" />
-                          </svg>
-                          <span class="truncate">{{ basename($ruta) }}</span>
+                        <a href="{{ asset('storage/'.$ruta) }}" target="_blank" class="block">
+                          @if($isImage)
+                            <img src="{{ asset('storage/'.$ruta) }}" alt="archivo" class="w-12 h-12 object-cover rounded">
+                          @else
+                            <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M7 2h6l5 5v13a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                            </svg>
+                          @endif
                         </a>
                         <label class="flex items-center gap-1 text-red-600 text-xs">
                           <input type="checkbox" name="delete_files[]" value="{{ $idx }}">Eliminar
