@@ -43,11 +43,18 @@
       <a href="{{ route('maestro.subtemas.crear', $tema->id) }}" class="px-4 py-2 bg-green-600 text-white rounded">Agregar Subtema</a>
       <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         @foreach($tema->subtemas as $subtema)
-          <a href="{{ route('maestro.subtemas.ver', $subtema->id) }}" class="block bg-white border rounded-lg p-4 shadow hover:shadow-md hover:bg-blue-50 transition">
-            <h3 class="font-semibold text-blue-800">{{ $subtema->nombre }}</h3>
-            @if($subtema->descripcion)
-              <p class="text-sm text-gray-600">{{ \Illuminate\Support\Str::limit($subtema->descripcion, 80) }}</p>
-            @endif
+          <a href="{{ route('maestro.subtemas.ver', $subtema->id) }}" class="block bg-gray-50 border border-gray-300 rounded-lg p-4 shadow-sm hover:shadow-md transition-transform transform hover:-translate-y-1 group">
+            <div class="flex justify-between items-center">
+              <div>
+                <div class="font-semibold text-gray-900 group-hover:text-blue-800">{{ $subtema->nombre }}</div>
+                @if($subtema->descripcion)
+                  <div class="text-xs text-gray-500 mt-1">{{ \Illuminate\Support\Str::limit($subtema->descripcion, 80) }}</div>
+                @endif
+              </div>
+              <svg class="w-5 h-5 text-blue-700 group-hover:text-blue-900 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
           </a>
         @endforeach
       </div>
