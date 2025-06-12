@@ -25,6 +25,9 @@
       <a href="{{ route('alumno.inicio', ['tab' => 'tareas']) }}"
          class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium {{ $tab === 'tareas' ? 'bg-[#2e3a68] text-white' : '' }}">
         Tareas
+        @if(($tareasRechazadas ?? 0) > 0)
+          <span class="ml-2 inline-block w-2 h-2 bg-red-500 rounded-full"></span>
+        @endif
       </a>
       <a href="{{ route('alumno.inicio', ['tab' => 'informacion']) }}"
          class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium {{ $tab === 'informacion' ? 'bg-[#2e3a68] text-white' : '' }}">
@@ -62,6 +65,9 @@
         <a href="{{ route('alumno.inicio', ['tab' => 'tareas']) }}" @click="sidebarOpen = false"
            class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium {{ $tab === 'tareas' ? 'bg-[#2e3a68] text-white' : '' }}">
           Tareas
+          @if(($tareasRechazadas ?? 0) > 0)
+            <span class="ml-2 inline-block w-2 h-2 bg-red-500 rounded-full"></span>
+          @endif
         </a>
         <a href="{{ route('alumno.inicio', ['tab' => 'informacion']) }}" @click="sidebarOpen = false"
            class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium {{ $tab === 'informacion' ? 'bg-[#2e3a68] text-white' : '' }}">

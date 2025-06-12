@@ -17,7 +17,8 @@
     <h2 class="text-center text-2xl font-bold text-blue-900 mb-6">{{ $plan->nombre }}</h2>
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         @foreach($plan->temas as $tema)
-            <a href="{{ route('alumno.tema', $tema->id) }}" class="block bg-gray-50 border border-gray-300 rounded-lg p-4 shadow-sm hover:shadow-md transition-transform transform hover:-translate-y-1 group">
+            @php $rechazado = $tema->subtemas->flatMap->entregas->where('estado', 'rechazado')->isNotEmpty(); @endphp
+            <a href="{{ route('alumno.tema', $tema->id) }}" class="relative block bg-gray-50 border border-gray-300 rounded-lg p-4 shadow-sm hover:shadow-md transition-transform transform hover:-translate-y-1 group">
                 <div class="flex justify-between items-center">
                     <div>
                         <div class="font-semibold text-gray-900 group-hover:text-blue-800">{{ $tema->nombre }}</div>
@@ -29,6 +30,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 </div>
+                @if($rechazado)
+                    <span class="absolute top-2 right-2 inline-block w-2 h-2 bg-red-500 rounded-full"></span>
+                @endif
             </a>
         @endforeach
     </div>

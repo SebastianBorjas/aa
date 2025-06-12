@@ -24,15 +24,24 @@ class AlumnoController extends Controller
             ]);
         }
 
-        return view('alumno.inicio', compact('tab', 'alumno'));
+        $tareasRechazadas = $this->conteoTareasRechazadas();
+
+        return view('alumno.inicio', compact('tab', 'alumno', 'tareasRechazadas'));
     }
     public function verTema(Tema $tema)
     {
         $alumno = Alumno::where('id_user', Auth::id())->firstOrFail();
 
-        $tema->load(['plan', 'subtemas']);
+        $tema->load([
+            'plan',
+            'subtemas.entregas' => function ($q) use ($alumno) {
+                $q->where('id_alumno', $alumno->id);
+            }
+        ]);
 
-        return view('alumno.tema', compact('alumno', 'tema'));
+        $tareasRechazadas = $this->conteoTareasRechazadas();
+
+        return view('alumno.tema', compact('alumno', 'tema', 'tareasRechazadas'));
     }
 
     public function verSubtema(Subtema $subtema)
@@ -43,7 +52,9 @@ class AlumnoController extends Controller
             $q->where('id_alumno', $alumno->id);
         }]);
 
-        return view('alumno.subtema', compact('alumno', 'subtema'));
+        $tareasRechazadas = $this->conteoTareasRechazadas();
+
+        return view('alumno.subtema', compact('alumno', 'subtema', 'tareasRechazadas'));
     }
     
     public function entregarTarea(Request $request, $subtemaId)
@@ -111,5 +122,14 @@ class AlumnoController extends Controller
 
         return redirect()->route('alumno.inicio', ['tab' => 'tareas'])->with('success', 'Tarea enviada');
     }
-
+    private function conteoTareasRechazadas(): int
+    {
+        $alumno = Alumno::where('id_user', Auth::id())->first();
+        if (!$alumno) {
+            return 0;
+        }
+        return Entrega::where('id_alumno', $alumno->id)
+            ->where('estado', 'rechazado')
+            ->count();
+    }
 }

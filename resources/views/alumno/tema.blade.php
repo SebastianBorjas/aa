@@ -23,7 +23,12 @@
   <!-- Sidebar (Desktop) -->
   <aside class="hidden md:block md:fixed md:left-0 md:top-16 md:h-[calc(100vh_-_4rem)] w-64 bg-[#202c54] text-white p-4 space-y-4 overflow-y-auto">
     <nav class="flex flex-col gap-2">
-      <a href="{{ route('alumno.inicio', ['tab' => 'tareas']) }}" class="px-4 py-2 rounded bg-[#2e3a68] text-white hover:bg-[#2e3a68] transition text-left font-medium">Tareas</a>
+      <a href="{{ route('alumno.inicio', ['tab' => 'tareas']) }}" class="px-4 py-2 rounded bg-[#2e3a68] text-white hover:bg-[#2e3a68] transition text-left font-medium">
+        Tareas
+        @if(($tareasRechazadas ?? 0) > 0)
+          <span class="ml-2 inline-block w-2 h-2 bg-red-500 rounded-full"></span>
+        @endif
+      </a>
       <a href="{{ route('alumno.inicio', ['tab' => 'informacion']) }}" class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">Información</a>
     </nav>
     <form method="POST" action="{{ route('logout') }}" class="pt-4 border-t border-white/20">
@@ -62,7 +67,16 @@
     @endif
     <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         @foreach($tema->subtemas as $subtema)
-          <a href="{{ route('alumno.subtema', $subtema->id) }}" class="block bg-gray-50 border border-gray-300 rounded-lg p-4 shadow-sm hover:shadow-md transition-transform transform hover:-translate-y-1 group">
+          @php
+            $entrega = $subtema->entregas->first();
+            $color = 'bg-gray-50 border-gray-300';
+            if($entrega){
+              if($entrega->estado === 'verificado') $color = 'bg-green-50 border-green-300';
+              elseif($entrega->estado === 'rechazado') $color = 'bg-red-50 border-red-300';
+              else $color = 'bg-blue-50 border-blue-300';
+            }
+          @endphp
+          <a href="{{ route('alumno.subtema', $subtema->id) }}" class="block {{ $color }} rounded-lg p-4 shadow-sm hover:shadow-md transition-transform transform hover:-translate-y-1 group">
             <div class="flex justify-between items-center">
               <div>
                 <div class="font-semibold text-gray-900 group-hover:text-blue-800">{{ $subtema->nombre }}</div>
