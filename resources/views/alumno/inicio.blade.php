@@ -8,7 +8,10 @@
 @section('title', 'Panel Alumno')
 
 @section('main')
-<div x-data="{ tab: '{{ request()->query('tab', 'tareas') }}', sidebarOpen: false }" class="flex flex-col md:flex-row flex-grow relative md:pl-64">
+@php
+    $tab = session('tab', request('tab', 'tareas'));
+@endphp
+<div x-data="{ sidebarOpen: false }" class="flex flex-col md:flex-row flex-grow relative md:pl-64">
   <!-- Hamburger Button (Mobile Only) -->
   <button x-show="!sidebarOpen" @click="sidebarOpen = true" class="md:hidden fixed top-4 left-4 z-50 p-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -20,13 +23,11 @@
   <aside class="hidden md:block md:fixed md:left-0 md:top-16 md:h-[calc(100vh_-_4rem)] w-64 bg-[#202c54] text-white p-4 space-y-4 overflow-y-auto">
     <nav class="flex flex-col gap-2">
       <a href="{{ route('alumno.inicio', ['tab' => 'tareas']) }}"
-         :class="{ 'bg-[#2e3a68] text-white': tab === 'tareas' }"
-         class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+         class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium {{ $tab === 'tareas' ? 'bg-[#2e3a68] text-white' : '' }}">
         Tareas
       </a>
       <a href="{{ route('alumno.inicio', ['tab' => 'informacion']) }}"
-         :class="{ 'bg-[#2e3a68] text-white': tab === 'informacion' }"
-         class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+         class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium {{ $tab === 'informacion' ? 'bg-[#2e3a68] text-white' : '' }}">
         Información
       </a>
     </nav>
@@ -58,16 +59,12 @@
         </svg>
       </button>
       <nav class="flex flex-col gap-2">
-        <a href="{{ route('alumno.inicio', ['tab' => 'tareas']) }}"
-           @click="tab = 'tareas'; sidebarOpen = false"
-           :class="{ 'bg-[#2e3a68] text-white': tab === 'tareas' }"
-           class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+        <a href="{{ route('alumno.inicio', ['tab' => 'tareas']) }}" @click="sidebarOpen = false"
+           class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium {{ $tab === 'tareas' ? 'bg-[#2e3a68] text-white' : '' }}">
           Tareas
         </a>
-        <a href="{{ route('alumno.inicio', ['tab' => 'informacion']) }}"
-           @click="tab = 'informacion'; sidebarOpen = false"
-           :class="{ 'bg-[#2e3a68] text-white': tab === 'informacion' }"
-           class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
+        <a href="{{ route('alumno.inicio', ['tab' => 'informacion']) }}" @click="sidebarOpen = false"
+           class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium {{ $tab === 'informacion' ? 'bg-[#2e3a68] text-white' : '' }}">
           Información
         </a>
       </nav>
@@ -84,13 +81,11 @@
 
   <!-- Main Content -->
   <main class="flex-grow bg-white p-6">
-    <div x-show="tab === 'tareas'" x-transition>
+    @if ($tab === 'tareas')
       @include('alumno.partials.tareas')
-    </div>
-
-    <div x-show="tab === 'informacion'" x-transition>
+    @elseif ($tab === 'informacion')
       @include('alumno.partials.informacion')
-    </div>
+    @endif
   </main>
 </div>
 
