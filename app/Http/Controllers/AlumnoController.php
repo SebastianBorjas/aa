@@ -16,9 +16,12 @@ class AlumnoController extends Controller
         $alumno = Alumno::where('id_user', Auth::id())->first();
 
         if ($alumno) {
-            $alumno->load(['plan.temas.subtemas.entregas' => function ($q) use ($alumno) {
-                $q->where('id_alumno', $alumno->id);
-            }]);
+            $alumno->load([
+                'plan.temas.subtemas.entregas' => function ($q) use ($alumno) {
+                    $q->where('id_alumno', $alumno->id);
+                },
+                'listas',
+            ]);
         }
 
         return view('alumno.inicio', compact('tab', 'alumno'));
