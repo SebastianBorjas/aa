@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             PlantelesDemoSeeder::class,
             PlanesSeeder::class,
+            EntregasSeeder::class,
         ]);
     }
 }
