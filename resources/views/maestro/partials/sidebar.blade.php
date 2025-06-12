@@ -15,6 +15,9 @@
          :class="{ 'bg-[#2e3a68] text-white': tab === 'revision' }"
          class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
         Revisión
+        @if(($revisionPendientes ?? 0) > 0)
+          <span class="ml-2 inline-block w-2 h-2 bg-red-500 rounded-full"></span>
+        @endif
       </a>
     </nav>
     <form method="POST" action="{{ route('logout') }}" class="pt-4 border-t border-white/20">
@@ -61,6 +64,9 @@
            :class="{ 'bg-[#2e3a68] text-white': tab === 'revision' }"
            class="px-4 py-2 rounded hover:bg-[#2e3a68] transition text-left font-medium">
           Revisión
+          @if(($revisionPendientes ?? 0) > 0)
+            <span class="ml-2 inline-block w-2 h-2 bg-red-500 rounded-full"></span>
+          @endif
         </a>
       </nav>
       <form method="POST" action="{{ route('logout') }}" class="pt-4 border-t border-white/20 mt-auto">

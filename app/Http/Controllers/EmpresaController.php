@@ -15,6 +15,7 @@ class EmpresaController extends Controller
     {
         return view('empresa.inicio', [
             'fecha' => $request->query('fecha') ?? now()->toDateString(),
+            'revisionPendientes' => $this->conteoPendientesRevision(),
         ]);
     }
 
@@ -140,5 +141,19 @@ class EmpresaController extends Controller
 
         return back()->with('success', 'Lista actualizada.')
                      ->with('tab', 'alumnos');
+    }
+
+    private function conteoPendientesRevision(): int
+    {
+        $empresa = Empresa::where('id_user', Auth::id())->first();
+        if (!$empresa) {
+            return 0;
+        }
+
+        return Entrega::where('estado', 'pen_emp')
+            ->whereHas('alumno', function ($q) use ($empresa) {
+                $q->where('id_empresa', $empresa->id);
+            })
+            ->count();
     }
 }

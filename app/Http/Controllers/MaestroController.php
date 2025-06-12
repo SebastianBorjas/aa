@@ -21,7 +21,11 @@ class MaestroController extends Controller
     {
         $tab = $request->query('tab', 'planes');
         $subtab = $request->query('subtab', 'crear_plan');
-        return view('maestro.inicio', compact('tab', 'subtab'));
+        return view('maestro.inicio', [
+            'tab' => $tab,
+            'subtab' => $subtab,
+            'revisionPendientes' => $this->conteoPendientesRevision(),
+        ]);
     }
 
     // Mostrar vista crear plan (retorna lista de planes)
@@ -36,7 +40,10 @@ class MaestroController extends Controller
                 ->get()
             : collect();
 
-        return view('maestro.partials.planes.crear_plan', compact('planes'));
+        return view('maestro.partials.planes.crear_plan', [
+            'planes' => $planes,
+            'revisionPendientes' => $this->conteoPendientesRevision(),
+        ]);
     }
 
     // Crear plan
@@ -284,22 +291,48 @@ class MaestroController extends Controller
     public function verPlan(Plan $plan)
     {
         $plan->load('temas');
-        return view('maestro.partials.planes.plan_show', compact('plan'));
+        return view('maestro.partials.planes.plan_show', [
+            'plan' => $plan,
+            'revisionPendientes' => $this->conteoPendientesRevision(),
+        ]);
     }
 
     public function verTema(Tema $tema)
     {
         $tema->load('subtemas');
-        return view('maestro.partials.planes.tema_show', compact('tema'));
+        return view('maestro.partials.planes.tema_show', [
+            'tema' => $tema,
+            'revisionPendientes' => $this->conteoPendientesRevision(),
+        ]);
     }
 
     public function verSubtema(Subtema $subtema)
     {
-        return view('maestro.partials.planes.subtema_show', compact('subtema'));
+        return view('maestro.partials.planes.subtema_show', [
+            'subtema' => $subtema,
+            'revisionPendientes' => $this->conteoPendientesRevision(),
+        ]);
     }
 
     public function formCrearSubtema(Tema $tema)
     {
-        return view('maestro.partials.planes.subtema_create', compact('tema'));
+        return view('maestro.partials.planes.subtema_create', [
+            'tema' => $tema,
+            'revisionPendientes' => $this->conteoPendientesRevision(),
+        ]);
+    }
+
+    private function conteoPendientesRevision(): int
+    {
+        $maestro = Maestro::where('id_user', Auth::id())->first();
+        if (!$maestro) {
+            return 0;
+        }
+
+        return Entrega::where('estado', 'pen_mae')
+            ->whereHas('alumno', function ($q) use ($maestro) {
+                $q->where('id_maestro', $maestro->id);
+            })
+            ->count();
     }
 }
