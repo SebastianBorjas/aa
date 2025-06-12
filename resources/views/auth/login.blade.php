@@ -81,12 +81,6 @@
                         Ingresar
                     </button>
 
-                    <div class="mt-0 text-center">
-                        <button type="button" 
-                                class="px-16 py-2 text-base bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium transition duration-200 rounded-lg">
-                            Registrarse
-                        </button>
-                    </div>
                 </form>
             </div>
         </div>
