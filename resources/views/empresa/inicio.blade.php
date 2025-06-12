@@ -56,7 +56,7 @@
            x-transition:leave-start="transform translate-x-0"
            x-transition:leave-end="transform -translate-x-full"
            class="fixed left-0 top-0 w-64 bg-[#202c54] text-white p-4 h-full z-50 flex flex-col">
-      <button @click="sidebarOpen = false" class="mb-4 p-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+      <button @click="sidebarOpen = false" class="self-start mb-4 p-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
