@@ -71,9 +71,9 @@
             $entrega = $subtema->entregas->first();
             $color = 'bg-gray-50 border-gray-300';
             if($entrega){
-              if($entrega->estado === 'verificado') $color = 'bg-green-50 border-green-300';
-              elseif($entrega->estado === 'rechazado') $color = 'bg-red-50 border-red-300';
-              else $color = 'bg-blue-50 border-blue-300';
+              if($entrega->estado === 'verificado') $color = 'bg-green-200 border-green-400';
+              elseif($entrega->estado === 'rechazado') $color = 'bg-red-200 border-red-400';
+              else $color = 'bg-blue-200 border-blue-400';
             }
           @endphp
           <a href="{{ route('alumno.subtema', $subtema->id) }}" class="block {{ $color }} rounded-lg p-4 shadow-sm hover:shadow-md transition-transform transform hover:-translate-y-1 group">
