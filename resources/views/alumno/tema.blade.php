@@ -34,7 +34,7 @@
 
   <!-- Mobile Sidebar and Overlay -->
   <div x-show="sidebarOpen" x-cloak class="md:hidden">
-    <div class="fixed inset-0 bg-gray-600 bg-opacity-50 z-40" @click="sidebarOpen = false"></div>
+    <div class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" @click="sidebarOpen = false"></div>
     <aside x-transition:enter="transition ease-out duration-300" x-transition:enter-start="transform -translate-x-full" x-transition:enter-end="transform translate-x-0" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="transform translate-x-0" x-transition:leave-end="transform -translate-x-full" class="fixed left-0 top-0 w-64 bg-[#202c54] text-white p-4 h-full z-50">
       <button @click="sidebarOpen = false" class="mb-4 p-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

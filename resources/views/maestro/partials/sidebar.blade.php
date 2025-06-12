@@ -29,7 +29,7 @@
 <!-- Mobile Sidebar and Overlay -->
 <div x-show="sidebarOpen" x-cloak class="md:hidden">
     <!-- Overlay -->
-    <div class="fixed inset-0 bg-gray-600 bg-opacity-50 z-40" @click="sidebarOpen = false"></div>
+    <div class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" @click="sidebarOpen = false"></div>
     <!-- Sidebar -->
     <aside x-transition:enter="transition ease-out duration-300"
            x-transition:enter-start="transform -translate-x-full"
