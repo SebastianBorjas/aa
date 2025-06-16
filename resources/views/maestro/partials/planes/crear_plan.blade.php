@@ -98,7 +98,7 @@
                                 >{{ $tema->descripcion }}</textarea>
                             <button type="submit" class="bg-blue-500 text-white font-bold px-4 py-1 rounded shadow hover:bg-blue-600 transition mt-2">Guardar</button>
                         </form>
-                        <form method="POST" action="{{ route('maestro.temas.delete', $tema->id) }}" onsubmit="return confirm('¿Eliminar este tema y sus subtemas?')" class="flex-none self-center ml-2">
+                        <form method="POST" action="{{ route('maestro.temas.delete', $tema->id) }}" onsubmit="return confirm('¿Eliminar este tema y sus actividades?')" class="flex-none self-center ml-2">
                             @csrf
                             <button type="submit" class="bg-red-500 text-white font-bold px-3 py-1 rounded shadow hover:bg-red-600 transition">Eliminar</button>
                         </form>
@@ -119,8 +119,8 @@
                         <div class="mt-3 pl-4 border-l-4 border-blue-300">
                             {{-- Título y eliminar --}}
                             <div class="flex items-center justify-between mb-1">
-                                <div class="font-bold text-blue-900 text-base">Subtema</div>
-                                <form method="POST" action="{{ route('maestro.subtemas.delete', $subtema->id) }}" onsubmit="return confirm('¿Eliminar subtema?')">
+                                <div class="font-bold text-blue-900 text-base">Actividad</div>
+                                <form method="POST" action="{{ route('maestro.subtemas.delete', $subtema->id) }}" onsubmit="return confirm('¿Eliminar actividad?')">
                                     @csrf
                                     <button type="submit" class="bg-red-400 text-white font-bold px-3 py-1 rounded shadow hover:bg-red-600 transition">Eliminar</button>
                                 </form>
@@ -131,7 +131,7 @@
                                 <input type="hidden" name="id" value="{{ $subtema->id }}">
                                 <input type="hidden" name="id_tema" value="{{ $tema->id }}">
                                 <input type="text" name="nombre" value="{{ $subtema->nombre }}"
-                                    placeholder="Nombre subtema"
+                                    placeholder="Nombre actividad"
                                     class="block mx-auto border-2 border-blue-300 rounded px-3 py-1 font-medium max-w-xs text-center outline-none focus:ring-2 focus:ring-blue-400 transition" required>
                                 <textarea name="descripcion" rows="2" placeholder="Descripción (opcional)"
                                     class="w-full border-2 border-blue-200 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-blue-300 transition resize-none"
@@ -195,17 +195,17 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                                 </svg>
-                                Agregar Subtema
+                                Agregar Actividad
                             </button>
                             <div x-show="showNewSubtema" x-transition class="mt-2 bg-white border-2 border-green-200 rounded-lg shadow p-4">
                                 <form method="POST" action="{{ route('maestro.subtemas.save') }}" class="flex flex-col items-center gap-2 w-full">
                                     @csrf
                                     <input type="hidden" name="id_tema" value="{{ $tema->id }}">
-                                    <input type="text" name="nombre" placeholder="Nuevo subtema"
+                                    <input type="text" name="nombre" placeholder="Nueva actividad"
                                         class="block mx-auto border-2 border-green-400 rounded px-3 py-1 max-w-xs text-center outline-none focus:ring-2 focus:ring-green-400 transition" required>
                                     <textarea name="descripcion" rows="2" placeholder="Descripción"
                                         class="w-full border-2 border-green-200 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-green-200 transition resize-none"></textarea>
-                                    <button type="submit" class="bg-green-500 text-white font-bold px-4 py-1 rounded shadow hover:bg-green-700 transition mt-2">Agregar Subtema</button>
+                                    <button type="submit" class="bg-green-500 text-white font-bold px-4 py-1 rounded shadow hover:bg-green-700 transition mt-2">Agregar Actividad</button>
                                 </form>
                             </div>
                         </div>

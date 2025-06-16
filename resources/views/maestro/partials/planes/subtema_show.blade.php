@@ -5,7 +5,7 @@
   <script src="https://unpkg.com/alpinejs" defer></script>
 @endpush
 
-@section('title', 'Subtema')
+@section('title', 'Actividad')
 
 @section('main')
 <div x-data="{ sidebarOpen: false, editSubtema: false }" class="flex flex-col md:flex-row flex-grow relative md:pl-64">
@@ -19,7 +19,7 @@
 
   <main class="flex-grow bg-white p-6">
     <div class="mb-4">
-      <a href="{{ route('maestro.temas.ver', $subtema->id_tema) }}" class="text-blue-600 hover:underline">&larr; Volver a los subtemas</a>
+      <a href="{{ route('maestro.temas.ver', $subtema->id_tema) }}" class="text-blue-600 hover:underline">&larr; Volver a las actividades</a>
     </div>
     <div class="text-center bg-gray-50 border rounded-lg p-4 max-w-2xl mx-auto">
       <h2 class="text-2xl font-bold text-blue-900">{{ $subtema->nombre }}</h2>
