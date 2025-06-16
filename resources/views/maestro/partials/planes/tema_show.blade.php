@@ -40,7 +40,7 @@
     </div>
 
     <div class="mt-6">
-      <a href="{{ route('maestro.subtemas.crear', $tema->id) }}" class="px-4 py-2 bg-green-600 text-white rounded">Agregar Subtema</a>
+      <a href="{{ route('maestro.subtemas.crear', $tema->id) }}" class="px-4 py-2 bg-green-600 text-white rounded">Agregar Actividad</a>
       <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         @foreach($tema->subtemas as $subtema)
           <a href="{{ route('maestro.subtemas.ver', $subtema->id) }}" class="block bg-gray-50 border border-gray-300 rounded-lg p-4 shadow-sm hover:shadow-md transition-transform transform hover:-translate-y-1 group">

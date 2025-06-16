@@ -5,7 +5,7 @@
   <script src="https://unpkg.com/alpinejs" defer></script>
 @endpush
 
-@section('title', 'Nuevo Subtema')
+@section('title', 'Nueva Actividad')
 
 @section('main')
 <div x-data="{ sidebarOpen: false }" class="flex flex-col md:flex-row flex-grow relative md:pl-64">
@@ -19,10 +19,10 @@
 
   <main class="flex-grow bg-white p-6">
     <div class="mb-4">
-      <a href="{{ route('maestro.temas.ver', $tema->id) }}" class="text-blue-600 hover:underline">&larr; Volver a los subtemas</a>
+      <a href="{{ route('maestro.temas.ver', $tema->id) }}" class="text-blue-600 hover:underline">&larr; Volver a las actividades</a>
     </div>
     <div class="max-w-xl mx-auto" x-data="fileUploader()">
-      <h2 class="text-center text-2xl font-bold text-blue-900 mb-4">Nuevo Subtema</h2>
+      <h2 class="text-center text-2xl font-bold text-blue-900 mb-4">Nueva Actividad</h2>
       <form method="POST" action="{{ route('maestro.subtemas.save') }}" enctype="multipart/form-data" class="space-y-2">
         @csrf
         <input type="hidden" name="id_tema" value="{{ $tema->id }}">

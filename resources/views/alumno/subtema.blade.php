@@ -5,7 +5,7 @@
   <script src="https://unpkg.com/alpinejs" defer></script>
 @endpush
 
-@section('title', 'Subtema')
+@section('title', 'Actividad')
 
 @section('main')
 <div x-data="{ sidebarOpen: false }" class="flex flex-col md:flex-row flex-grow relative md:pl-64">
@@ -50,7 +50,7 @@
 
   <main class="flex-grow bg-white p-6">
     <div class="mb-4">
-      <a href="{{ route('alumno.tema', $subtema->id_tema) }}" class="text-blue-600 hover:underline">&larr; Volver a los subtemas</a>
+      <a href="{{ route('alumno.tema', $subtema->id_tema) }}" class="text-blue-600 hover:underline">&larr; Volver a las actividades</a>
     </div>
     @php $entrega = $subtema->entregas->first(); @endphp
     <div class="max-w-3xl mx-auto space-y-6">

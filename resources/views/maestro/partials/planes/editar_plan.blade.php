@@ -56,7 +56,7 @@
                 &times;
             </button>
             <div class="mb-6 p-4 bg-yellow-100 border-l-4 border-yellow-400 text-yellow-800 rounded">
-                <b>Nota:</b> Aquí puedes agregar, editar o eliminar temas y subtemas.<br>
+                <b>Nota:</b> Aquí puedes agregar, editar o eliminar temas y actividades.<br>
                 Recuerda guardar los cambios al terminar.
             </div>
             <!-- Nombre del plan -->
@@ -85,16 +85,16 @@
                     </div>
                     <!-- Subtemas -->
                     <div class="pl-4 md:pl-8 border-l-4 border-blue-300 bg-blue-50 py-2 rounded">
-                        <div class="font-semibold text-blue-700 text-sm mb-1">Subtemas de este tema</div>
+                        <div class="font-semibold text-blue-700 text-sm mb-1">Actividades de este tema</div>
                         <template x-for="(subtema, sIndex) in tema.subtemas" :key="sIndex">
                             <div class="mb-4">
                                 <div class="flex flex-col md:flex-row gap-2 items-center mb-1">
                                     <input type="text" x-model="subtema.nombre"
                                            class="w-full md:w-1/3 border border-gray-300 rounded p-2 text-xs"
-                                           placeholder="Nombre del subtema">
+                                           placeholder="Nombre de la actividad">
                                     <input type="text" x-model="subtema.descripcion"
                                            class="w-full md:w-2/3 border border-gray-300 rounded p-2 text-xs"
-                                           placeholder="Descripción del subtema">
+                                           placeholder="Descripción de la actividad">
                                     <button type="button"
                                         @click="tema.subtemas.splice(sIndex, 1)"
                                         class="ml-2 text-red-500 hover:underline text-xs">Eliminar</button>
@@ -115,7 +115,7 @@
                         <button type="button"
                                 @click="tema.subtemas.push({nombre: '', descripcion: '', rutas: []})"
                                 class="mt-1 px-3 py-1 bg-blue-200 text-blue-700 rounded hover:bg-blue-300 transition text-xs">
-                            + Agregar Subtema
+                            + Agregar Actividad
                         </button>
                     </div>
                 </div>
