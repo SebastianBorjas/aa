@@ -10,10 +10,12 @@ use App\Models\Especialidad;
 use App\Models\User;
 use App\Models\Moderador;
 use App\Models\Lista;
+use App\Models\Entrega;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Mpdf\Mpdf;
 
 class ModController extends Controller
 {
@@ -606,5 +608,52 @@ class ModController extends Controller
 
         return back()->with('success', 'Lista actualizada.')
                      ->with('tab', 'alumnos');
+    }
+
+    public function generarReporteAlumnoPdf(Request $request, Alumno $alumno)
+    {
+        $request->validate([
+            'fecha_inicio' => 'required|date',
+            'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
+        ]);
+
+        $fi = Carbon::parse($request->input('fecha_inicio'))->startOfDay();
+        $ff = Carbon::parse($request->input('fecha_fin'))->endOfDay();
+
+        $listas = Lista::where('id_alumno', $alumno->id)
+            ->whereBetween('fecha', [$fi, $ff])
+            ->get();
+
+        $entregas = Entrega::where('id_alumno', $alumno->id)
+            ->whereBetween('created_at', [$fi, $ff])
+            ->get();
+
+        $attendanceSummary = [
+            'asistencia' => $listas->where('estado', 'asistencia')->count(),
+            'falta' => $listas->where('estado', 'falta')->count(),
+            'justificado' => $listas->where('estado', 'justificado')->count(),
+        ];
+
+        $html = view('moderador.reportes.pdf', [
+            'alumno' => $alumno,
+            'fi' => $fi,
+            'ff' => $ff,
+            'attendanceSummary' => $attendanceSummary,
+            'entregas' => $entregas,
+        ])->render();
+
+        $pdf = new Mpdf();
+        $pdf->WriteHTML($html);
+
+        $directory = storage_path('app/reportes');
+        if (!is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+
+        $fileName = 'reporte_' . $alumno->id . '_' . now()->format('Ymd_His') . '.pdf';
+        $path = $directory . '/' . $fileName;
+        $pdf->Output($path, \Mpdf\Output\Destination::FILE);
+
+        return response()->download($path);
     }
 }
