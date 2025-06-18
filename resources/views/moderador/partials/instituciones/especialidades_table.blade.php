@@ -61,20 +61,20 @@
                 <p class="text-gray-600">No hay especialidades registradas para la institución seleccionada.</p>
             @else
                 <div class="overflow-x-auto max-w-full">
-                    <table class="min-w-full divide-y divide-gray-300">
-                        <thead class="bg-gray-700 text-white">
+                    <table class="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg shadow-sm">
+                        <thead class="bg-gray-800 text-white">
                             <tr>
                                 <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Nombre</th>
                                 <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Institución</th>
                                 <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Creado</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-300">
+                        <tbody class="bg-white divide-y divide-gray-200">
                             @foreach ($especialidades as $especialidad)
                                   <tr
                                       x-show="selectedInstitucion == {{ $especialidad->id_institucion }}" x-cloak
                                     x-on:click="editIdEspecialidad = editIdEspecialidad === {{ $especialidad->id }} ? null : {{ $especialidad->id }}; isFormOpenEspecialidad = false" 
-                                    class="cursor-pointer hover:bg-gray-200 transition"
+                                    class="cursor-pointer hover:bg-gray-100 transition"
                                     :class="{ 'bg-gray-200': editIdEspecialidad === {{ $especialidad->id }} }"
                                 >
                                     <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{{ $especialidad->name }}</td>

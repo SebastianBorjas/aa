@@ -34,18 +34,18 @@
                 <p class="text-gray-600">No hay instituciones registradas.</p>
             @else
                 <div class="overflow-x-auto max-w-full">
-                    <table class="min-w-full divide-y divide-gray-300">
-                        <thead class="bg-gray-700 text-white">
+                    <table class="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg shadow-sm">
+                        <thead class="bg-gray-800 text-white">
                             <tr>
                                 <th class="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">Nombre</th>
                                 <th class="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">Creado</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-300">
+                        <tbody class="bg-white divide-y divide-gray-200">
                             @foreach ($instituciones as $institucion)
                                 <tr 
                                     x-on:click="editIdInstitucion = editIdInstitucion === {{ $institucion->id }} ? null : {{ $institucion->id }}; isFormOpenInstitucion = false" 
-                                    class="cursor-pointer hover:bg-gray-200 transition"
+                                    class="cursor-pointer hover:bg-gray-100 transition"
                                     :class="{ 'bg-gray-200': editIdInstitucion === {{ $institucion->id }} }"
                                 >
                                     <td class="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $institucion->name }}</td>
