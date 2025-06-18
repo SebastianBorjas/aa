@@ -22,6 +22,7 @@
     editIdAlumno: null,
     isEditModeAlumno: false,
     showPlanId: null,
+    showReportesId: null,
     institucionId: '{{ old('id_institucion') }}',
     maestros: [],
     especialidades: [],
@@ -46,7 +47,7 @@
         this.especialidades = await responseEsp.json();
     }
 }">
-    <div class="flex flex-col lg:flex-row lg:space-x-6 space-y-6 lg:space-y-0">
+    <div class="flex flex-col lg:flex-row lg:space-x-6 space-y-6 lg:space-y-0" x-show="!showReportesId">
         <!-- Left Side: Table -->
         <div class="w-full lg:w-2/3 bg-white rounded-lg shadow-md p-6">
             <div class="flex justify-between items-center mb-4">
@@ -461,6 +462,8 @@
                                 <div class="h-2 bg-blue-600 rounded" style="width: {{ $avance }}%"></div>
                             </div>
                             <button type="button" x-on:click="showPlanId = {{ $alumno->id }}" class="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Ver plan</button>
+                            <p class="text-sm text-gray-600 mt-4">Ver reportes mensuales o generarlos</p>
+                            <button type="button" x-on:click="showReportesId = {{ $alumno->id }}" class="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Reportes</button>
                         </div>
                     @endif
                     <div class="mt-4 text-right">
@@ -658,6 +661,15 @@
             @endforeach
         </div>
     </div>
+
+    @foreach ($alumnos as $alumno)
+        <div x-show="showReportesId === {{ $alumno->id }}" x-cloak class="bg-white rounded-lg shadow-md p-6">
+            @include('moderador.partials.alumno_reportes', ['alumno' => $alumno])
+            <div class="mt-4 text-right">
+                <button type="button" x-on:click="showReportesId = null" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Cerrar</button>
+            </div>
+        </div>
+    @endforeach
 
     <style>
         [x-cloak] { display: none !important; }
