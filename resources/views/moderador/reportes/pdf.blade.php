@@ -23,9 +23,10 @@
         </div>
     </div>
 
-    <p><strong>Especialidad:</strong> {{ $alumno->especialidad->nombre ?? '-' }}</p>
-    <p><strong>Institución:</strong> {{ $alumno->institucion->nombre ?? '-' }}</p>
+    <p><strong>Especialidad:</strong> {{ $alumno->especialidad->name ?? '-' }}</p>
+    <p><strong>Institución:</strong> {{ $alumno->institucion->name ?? '-' }}</p>
     <p><strong>Empresa:</strong> {{ $alumno->empresa->name ?? '-' }}</p>
+    <p><strong>Maestro:</strong> {{ $alumno->maestro->name ?? '-' }}</p>
 
     <h2>Asistencia</h2>
     <div class="chart">

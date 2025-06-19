@@ -617,6 +617,8 @@ class ModController extends Controller
             'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
         ]);
 
+        $alumno->load(['especialidad', 'institucion', 'maestro', 'empresa']);
+
         $fi = Carbon::parse($request->input('fecha_inicio'))->startOfDay();
         $ff = Carbon::parse($request->input('fecha_fin'))->endOfDay();
 
