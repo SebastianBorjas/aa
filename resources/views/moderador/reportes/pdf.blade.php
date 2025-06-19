@@ -1,44 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="utf-8">
     <style>
-        body { font-family: sans-serif; }
-        .chart { display: flex; align-items: flex-end; height: 150px; margin-top: 20px; }
-        .bar { width: 60px; margin-right: 10px; background: #eee; position: relative; }
-        .fill { position: absolute; bottom: 0; left: 0; width: 100%; }
-        .label { text-align: center; margin-top: 5px; font-size: 12px; }
+        body { font-family: sans-serif; color: #333; }
+        .header { position: relative; margin-bottom: 20px; padding-right: 60px; }
+        .logo { position: absolute; right: 0; top: 0; height: 40px; }
+        h1 { font-size: 22px; margin: 0; }
+        h2 { font-size: 18px; margin-top: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 6px; font-size: 12px; }
+        th { background: #f3f4f6; }
+        .chart { text-align: center; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <h1>Reporte de {{ \Illuminate\Support\Str::title($alumno->name) }}</h1>
-    <p>Periodo: {{ $fi->toDateString() }} - {{ $ff->toDateString() }}</p>
+    <div class="header">
+        <img class="logo" src="{{ $logo }}" alt="Logo">
+        <div>
+            <h1>Reporte de {{ \Illuminate\Support\Str::title($alumno->name) }}</h1>
+            <p>Periodo: {{ $fi->toDateString() }} - {{ $ff->toDateString() }}</p>
+        </div>
+    </div>
+
+    <p><strong>Especialidad:</strong> {{ $alumno->especialidad->nombre ?? '-' }}</p>
+    <p><strong>Institución:</strong> {{ $alumno->institucion->nombre ?? '-' }}</p>
+    <p><strong>Empresa:</strong> {{ $alumno->empresa->name ?? '-' }}</p>
 
     <h2>Asistencia</h2>
-    @php $total = max(1, array_sum($attendanceSummary)); @endphp
     <div class="chart">
-        <div class="bar">
-            <div class="fill" style="height:{{ $attendanceSummary['asistencia']/$total*100 }}%; background:#16a34a;"></div>
-        </div>
-        <div class="bar">
-            <div class="fill" style="height:{{ $attendanceSummary['falta']/$total*100 }}%; background:#dc2626;"></div>
-        </div>
-        <div class="bar">
-            <div class="fill" style="height:{{ $attendanceSummary['justificado']/$total*100 }}%; background:#fbbf24;"></div>
-        </div>
+        <img src="{{ $attendanceChartUrl }}" width="250" alt="Gráfica de asistencia">
     </div>
-    <div style="display:flex;">
-        <div class="label" style="width:60px">Asist.</div>
-        <div class="label" style="width:70px">Faltas</div>
-        <div class="label" style="width:80px">Justif.</div>
-    </div>
-    <p>Total días registrados: {{ $total }}</p>
+    <table>
+        <thead>
+            <tr><th>Fecha</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+            @foreach($attendanceDetails as $dia)
+                <tr>
+                    <td>{{ $dia['fecha'] }}</td>
+                    <td>{{ ucfirst($dia['estado']) }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 
-    <h2>Actividades entregadas: {{ $entregas->count() }}</h2>
-    <ul>
-        @foreach($entregas as $entrega)
-            <li>{{ $entrega->subtema->name ?? 'Actividad' }} - {{ $entrega->created_at->format('Y-m-d') }}</li>
-        @endforeach
-    </ul>
+    <h2>Actividades</h2>
+    <div class="chart">
+        <img src="{{ $tasksChartUrl }}" width="250" alt="Gráfica de actividades">
+    </div>
+    <table>
+        <thead>
+            <tr><th>Actividad</th><th>Fecha de entrega</th></tr>
+        </thead>
+        <tbody>
+            @foreach($entregasPeriodo as $entrega)
+                <tr>
+                    <td>{{ $entrega->subtema->nombre ?? 'Actividad' }}</td>
+                    <td>{{ $entrega->created_at->format('Y-m-d') }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 </body>
 </html>

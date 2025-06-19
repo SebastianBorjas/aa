@@ -624,22 +624,93 @@ class ModController extends Controller
             ->whereBetween('fecha', [$fi, $ff])
             ->get();
 
-        $entregas = Entrega::where('id_alumno', $alumno->id)
+        $entregasPeriodo = Entrega::where('id_alumno', $alumno->id)
             ->whereBetween('created_at', [$fi, $ff])
             ->get();
 
+        $totalExpected = 0;
+        $attendanceDetails = [];
+        for ($d = $fi->copy(); $d <= $ff; $d->addDay()) {
+            $dayMap = [0 => 'domingo', 1 => 'lunes', 2 => 'martes', 3 => 'miercoles', 4 => 'jueves', 5 => 'viernes', 6 => 'sabado'];
+            $day = $dayMap[$d->dayOfWeek];
+            if ($d->between($alumno->fecha_inicio, $alumno->fecha_termino) && $alumno->$day) {
+                $totalExpected++;
+                $registro = $listas->first(function ($lista) use ($d) {
+                    return $lista->fecha->toDateString() === $d->toDateString();
+                });
+                $estado = $registro->estado ?? 'sin registro';
+                $attendanceDetails[] = ['fecha' => $d->toDateString(), 'estado' => $estado];
+            }
+        }
+
         $attendanceSummary = [
-            'asistencia' => $listas->where('estado', 'asistencia')->count(),
-            'falta' => $listas->where('estado', 'falta')->count(),
-            'justificado' => $listas->where('estado', 'justificado')->count(),
+            'asistencia'   => $listas->where('estado', 'asistencia')->count(),
+            'falta'        => $listas->where('estado', 'falta')->count(),
+            'justificado'  => $listas->where('estado', 'justificado')->count(),
+        ];
+        $attendanceSummary['no_registro'] = max(0, $totalExpected - $listas->count());
+        $attendanceSummary['total'] = $totalExpected;
+
+        $totalSubtemas = $alumno->plan ? $alumno->plan->temas->sum(fn($t) => $t->subtemas->count()) : 0;
+        $entregasTotales = Entrega::where('id_alumno', $alumno->id)->get()->unique('id_subtema');
+        $entregasPeriodoU = $entregasPeriodo->unique('id_subtema');
+
+        $taskSummary = [
+            'en_periodo'    => $entregasPeriodoU->count(),
+            'fuera_periodo' => max(0, $entregasTotales->count() - $entregasPeriodoU->count()),
+            'pendientes'    => max(0, $totalSubtemas - $entregasTotales->count()),
+            'total'         => $totalSubtemas,
         ];
 
+        $logoPath = public_path('images/lgo.png');
+        $logo = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+
+        $attendanceChartConfig = [
+            'type' => 'pie',
+            'data' => [
+                'labels' => ['Asistencia', 'Justificado', 'Falta', 'Sin registro'],
+                'datasets' => [[
+                    'data' => [
+                        $attendanceSummary['asistencia'],
+                        $attendanceSummary['justificado'],
+                        $attendanceSummary['falta'],
+                        $attendanceSummary['no_registro'],
+                    ],
+                    'backgroundColor' => ['#16a34a', '#2563eb', '#dc2626', '#9ca3af'],
+                ]],
+            ],
+            'options' => [ 'plugins' => [ 'legend' => [ 'position' => 'bottom' ] ] ],
+        ];
+
+        $tasksChartConfig = [
+            'type' => 'pie',
+            'data' => [
+                'labels' => ['Entregadas en periodo', 'Entregadas fuera', 'Pendientes'],
+                'datasets' => [[
+                    'data' => [
+                        $taskSummary['en_periodo'],
+                        $taskSummary['fuera_periodo'],
+                        $taskSummary['pendientes'],
+                    ],
+                    'backgroundColor' => ['#16a34a', '#2563eb', '#9ca3af'],
+                ]],
+            ],
+            'options' => [ 'plugins' => [ 'legend' => [ 'position' => 'bottom' ] ] ],
+        ];
+
+        $attendanceChartUrl = 'https://quickchart.io/chart?c=' . urlencode(json_encode($attendanceChartConfig));
+        $tasksChartUrl = 'https://quickchart.io/chart?c=' . urlencode(json_encode($tasksChartConfig));
+
         $html = view('moderador.reportes.pdf', [
-            'alumno' => $alumno,
-            'fi' => $fi,
-            'ff' => $ff,
+            'alumno'           => $alumno,
+            'fi'               => $fi,
+            'ff'               => $ff,
             'attendanceSummary' => $attendanceSummary,
-            'entregas' => $entregas,
+            'attendanceDetails' => $attendanceDetails,
+            'entregasPeriodo'   => $entregasPeriodo,
+            'logo'              => $logo,
+            'attendanceChartUrl' => $attendanceChartUrl,
+            'tasksChartUrl'      => $tasksChartUrl,
         ])->render();
 
         $pdf = new Mpdf();
